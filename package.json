@@ -1,0 +1,22 @@
+{
+  "name": "cs419-project-group-15",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "prettier --write --config ./.prettierrc ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Firebird1029/cs419-project-group-15.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Firebird1029/cs419-project-group-15/issues"
+  },
+  "homepage": "https://github.com/Firebird1029/cs419-project-group-15#readme",
+  "devDependencies": {
+    "prettier": "^3.2.4"
+  }
+}
