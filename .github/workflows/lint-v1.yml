@@ -12,10 +12,14 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - name: Install modules
+      - name: Install frontend modules
         run: cd frontend && npm install
       - name: Lint frontend
         run: cd frontend && npm run lint
+      - name: Install backend modules
+        run: cd backend && pip install pylint
+      - name: Lint backend
+        run: cd backend && python -m pylint *.py
       - uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "[Github Actions] lint files"
