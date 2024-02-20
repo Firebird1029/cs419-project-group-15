@@ -15,6 +15,12 @@ To lint the backend code:
 python -m pylint *.py
 ```
 
+To access the backend server:
+
+```plaintext
+localhost:5000
+```
+
 ## Frontend
 
 To run the frontend application:
@@ -28,4 +34,10 @@ To lint the frontend code:
 
 ```bash
 npm run lint
+```
+
+To access the frontend application:
+
+```plaintext
+localhost:3000
 ```
