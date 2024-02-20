@@ -1,0 +1,31 @@
+# README
+
+## Backend
+
+To run the backend server:
+
+```bash
+cd backend
+FLASK_APP=server flask run
+```
+
+To lint the backend code:
+
+```bash
+python -m pylint *.py
+```
+
+## Frontend
+
+To run the frontend application:
+
+```bash
+cd frontend
+npm run dev
+```
+
+To lint the frontend code:
+
+```bash
+npm run lint
+```
