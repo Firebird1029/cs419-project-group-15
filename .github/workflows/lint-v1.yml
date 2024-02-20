@@ -13,7 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install modules
-        run: npm install
+        run: cd frontend && npm install
       - name: Lint frontend
         run: cd frontend && npm run lint
       - uses: stefanzweifel/git-auto-commit-action@v5
