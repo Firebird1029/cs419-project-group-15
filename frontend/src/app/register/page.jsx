@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Button,
   Center,
@@ -7,6 +9,7 @@ import {
   Link,
   Stack,
 } from "@chakra-ui/react";
+import { register } from "@/services/apiService";
 
 export default function Register() {
   return (
@@ -21,7 +24,9 @@ export default function Register() {
         <Input placeholder="" />
         <p>Password:</p>
         <Input placeholder="" type="password" />
-        <Button colorScheme="blue">Sign Up</Button>
+        <Button colorScheme="blue" onClick={() => register()}>
+          Sign Up
+        </Button>
       </Stack>
 
       <Stack spacing={4} mt={16}>
