@@ -1,12 +1,26 @@
 # README
 
+## Installation
+
+To install the backend Python packages:
+
+```bash
+cd backend && pip install -r requirements.txt && cd -
+```
+
+To install the frontend NPM packages:
+
+```bash
+cd frontend && npm install && cd -
+```
+
 ## Backend
 
 To run the backend server:
 
 ```bash
 cd backend
-FLASK_APP=server flask run
+flask --app server run --debug
 ```
 
 To lint the backend code:
@@ -41,3 +55,7 @@ To access the frontend application:
 ```plaintext
 localhost:3000
 ```
+
+## Misc
+
+To save a Python package to `backend/requirements.txt`, use `pigar`: `pip install pigar` then `pigar generate`.
