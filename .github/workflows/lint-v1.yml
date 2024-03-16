@@ -13,9 +13,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install frontend modules
-        run: cd frontend && npm ci
+        run: npm ci
       - name: Lint frontend
-        run: cd frontend && npm run lint
+        run: npm run lint
       - name: Install backend modules
         run: cd api && pip install -r requirements.txt
       - name: Lint backend

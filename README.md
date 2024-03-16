@@ -11,12 +11,12 @@ cd api && pip install -r requirements.txt && cd -
 To install the frontend NPM packages:
 
 ```bash
-cd frontend && npm install && cd -
+npm install && cd -
 ```
 
 ## Backend
 
-To run the backend server:
+To run the local backend server:
 
 ```bash
 cd api
@@ -37,10 +37,9 @@ http://127.0.0.1:5000/api/ping
 
 ## Frontend
 
-To run the frontend application:
+To run the local frontend application:
 
 ```bash
-cd frontend
 npm run dev
 ```
 
@@ -50,7 +49,7 @@ To lint the frontend code:
 npm run lint
 ```
 
-To access the frontend application:
+To access the local frontend application:
 
 ```plaintext
 localhost:3000
