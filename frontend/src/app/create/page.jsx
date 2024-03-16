@@ -62,7 +62,7 @@ export default function CreateNewGamePage() {
 
   // Ensure user is logged in
   useEffect(() => {
-    supabase.auth.getUser().then(({ user, error }) => {
+    supabase.auth.getUser().then(({ data: { user }, error }) => {
       if (error || !user) {
         router.push("/login");
       } else {
