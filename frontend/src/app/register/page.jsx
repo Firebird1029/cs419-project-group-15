@@ -24,6 +24,7 @@ export default function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  // Check if user is already logged in
   useEffect(() => {
     (async () => {
       const {
