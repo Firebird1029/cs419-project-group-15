@@ -81,7 +81,7 @@ export default function GamePage({ params: { slug } }) {
           }
         } else {
           // TODO display error message in GUI
-          console.error(res.message);
+          console.error(res);
         }
         setLoading(false);
       })
