@@ -16,14 +16,19 @@ const supabase = createClient();
 
 // Get Game
 async function getGame(gameUrlTag) {
+  console.log(1);
   try {
     const res = await api.get(`/g/${gameUrlTag}`);
+    console.log(2);
     if (res.data && res.data.success) {
       // successful data
+      console.log(3);
       return res.data;
     }
+    console.log(4);
     throw new Error("Failed to retrieve game. Please try again.");
   } catch (e) {
+    console.log(5);
     return {
       success: false,
       message: e.response ? e.response.data.message : e.message || e,

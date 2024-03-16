@@ -73,8 +73,10 @@ export default function GamePage({ params: { slug } }) {
   const [game, setGame] = useState(null);
 
   useEffect(() => {
+    console.log("slug:", slug);
     getGame(slug)
       .then((res) => {
+        console.log("TEST", res);
         if (res.success) {
           if (res.count > 0) {
             setGame(res.data[0]); // return game that matches url tag
