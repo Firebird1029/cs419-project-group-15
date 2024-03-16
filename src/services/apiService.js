@@ -16,7 +16,8 @@ const supabase = createClient();
 
 // Get Game
 async function getGame(gameUrlTag) {
-  console.log(1);
+  console.log(1, gameUrlTag);
+  console.log("NEXT_PUBLIC_VERCEL_URL", process.env.NEXT_PUBLIC_VERCEL_URL);
   try {
     const res = await api.get(`/g/${gameUrlTag}`);
     console.log(2);
@@ -29,6 +30,8 @@ async function getGame(gameUrlTag) {
     throw new Error("Failed to retrieve game. Please try again.");
   } catch (e) {
     console.log(5);
+    console.log(e);
+    console.log(6);
     return {
       success: false,
       message: e.response ? e.response.data.message : e.message || e,
