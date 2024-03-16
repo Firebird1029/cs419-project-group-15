@@ -5,7 +5,7 @@
 To install the backend Python packages:
 
 ```bash
-cd backend && pip install -r requirements.txt && cd -
+cd api && pip install -r requirements.txt && cd -
 ```
 
 To install the frontend NPM packages:
@@ -19,7 +19,7 @@ cd frontend && npm install && cd -
 To run the backend server:
 
 ```bash
-cd backend
+cd api
 flask --app server run --debug
 ```
 
@@ -29,10 +29,10 @@ To lint the backend code:
 python -m pylint *.py
 ```
 
-To access the backend server:
+To access the local backend server:
 
 ```plaintext
-localhost:5000
+http://127.0.0.1:5000/api/ping
 ```
 
 ## Frontend
