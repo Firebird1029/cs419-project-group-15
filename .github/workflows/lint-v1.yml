@@ -17,7 +17,7 @@ jobs:
       - name: Lint frontend
         run: npm run lint
       - name: Install backend modules
-        run: cd api && pip install -r requirements.txt && cd -
+        run: cd api && pip install -r requirements.txt && pip install pylint
       - name: Lint backend
         run: cd api && python -m pylint *.py
       - uses: stefanzweifel/git-auto-commit-action@v5
