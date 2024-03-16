@@ -1,4 +1,4 @@
-"""Main server code for the backend API."""
+"""Server code for the backend API."""
 
 # don't lint TODOs
 # pylint: disable=fixme
@@ -12,8 +12,6 @@ from db import supabase
 # Setup Flask app and API
 # TODO setup CORS
 app = Flask(__name__)
-app.secret_key = "super secret key"  # TODO change key, move to separate file
-app.config["SESSION_TYPE"] = "filesystem"  # TODO change to something else in future
 api = Api(app)
 
 
