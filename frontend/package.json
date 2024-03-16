@@ -3,7 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "flask-dev": "FLASK_DEBUG=1 pip3 install -r requirements.txt && python3 -m flask --app api/index run -p 5328",
+    "next-dev": "next dev",
+    "dev": "concurrently \"npm run flask-dev\" \"npm run next-dev\" --kill-others",
     "build": "next build",
     "start": "next start",
     "lint": "eslint --fix --c .eslintrc.json --ext .js,.jsx,.mjs .; prettier --write --config ./.prettierrc .",
@@ -17,6 +19,7 @@
     "@supabase/ssr": "^0.1.0",
     "@supabase/supabase-js": "^2.39.8",
     "axios": "^1.6.7",
+    "concurrently": "^8.2.2",
     "framer-motion": "^11.0.5",
     "next": "14.1.0",
     "react": "^18",
