@@ -22,6 +22,7 @@ class Ping(Resource):
 
     def get(self):
         """Return pong for a successful ping."""
+        print("PING")
         return "pong"
 
 
@@ -89,9 +90,12 @@ class Game(Resource):
     def get(self, url_tag):
         """Get a game by its URL tag."""
         try:
+            print("PING 1")
             res = supabase.table("games").select("*").eq("url_tag", url_tag).execute()
+            print("PING 2")
             return {"success": True, "data": res.data, "count": len(res.data)}
         except APIError as e:
+            print("PING 3", e)
             return {"success": False, "message": e.message, "count": 0}, 500
 
 
