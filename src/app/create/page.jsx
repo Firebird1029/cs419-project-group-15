@@ -88,7 +88,7 @@ export default function CreateNewGamePage() {
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user }, error }) => {
       if (error || !user) {
-        router.push("/login");
+        router.replace("/login");
       } else {
         setLoading(false);
       }

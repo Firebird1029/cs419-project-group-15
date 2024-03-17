@@ -35,7 +35,7 @@ export default function Register() {
 
       if (user) {
         // already logged in
-        router.push("/account");
+        router.replace("/account");
       } else {
         setLoading(false);
       }
