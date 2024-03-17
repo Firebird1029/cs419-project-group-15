@@ -10,7 +10,7 @@ class FlaskSessionStorage(SyncSupportedStorage):
     def __init__(self):
         self.storage = session
 
-    def get_item(self, key: str) -> str | None:
+    def get_item(self, key: str):
         if key in self.storage:
             return self.storage[key]
         return None
