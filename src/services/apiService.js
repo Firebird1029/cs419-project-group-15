@@ -8,7 +8,6 @@ const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_VERCEL_URL
     ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}/api`
     : "http://localhost:3000/api",
-  withCredentials: true,
 });
 
 // Supabase
@@ -49,6 +48,7 @@ async function createGame(gameDetails) {
     };
     const res = await api.post("/g/create", data, {
       timeout: 10000,
+      withCredentials: true,
       headers: {
         "Content-Type": "application/json",
       },

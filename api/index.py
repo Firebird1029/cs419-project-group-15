@@ -7,7 +7,8 @@ from flask import Flask, request
 from gotrue.errors import AuthApiError
 from flask_restful import Resource, Api, abort
 from postgrest.exceptions import APIError
-from flask_cors import CORS
+
+# from flask_cors import CORS
 from db import supabase
 
 # Setup Flask app and API
@@ -15,7 +16,7 @@ from db import supabase
 app = Flask(__name__)
 app.secret_key = "super secret key"  # TODO change key, move to separate file
 app.config["SESSION_TYPE"] = "filesystem"  # TODO change to something else in future
-CORS(app)
+# CORS(app)
 api = Api(app)
 
 
