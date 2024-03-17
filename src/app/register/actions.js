@@ -1,3 +1,5 @@
+// https://supabase.com/docs/guides/auth/server-side/nextjs
+
 "use server";
 
 import { revalidatePath } from "next/cache";

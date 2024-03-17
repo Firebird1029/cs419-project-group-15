@@ -3,34 +3,26 @@
 import axios from "axios";
 import createClient from "@/utils/supabase/server";
 
-// Create an axios instance
+// Create Axios instance
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_VERCEL_URL
     ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}/api`
-    : "http://localhost:3000/api",
+    : "http://localhost:3000/api", // Next.js redirects calls to this base URL to the Python server (at http://127.0.0.1:5328) in next.config.mjs
 });
 
 // Supabase
 const supabase = createClient();
 
-// Get Game
+// Get Game via its URL tag
 async function getGame(gameUrlTag) {
-  console.log(1, gameUrlTag);
-  console.log("NEXT_PUBLIC_VERCEL_URL", process.env.NEXT_PUBLIC_VERCEL_URL);
   try {
-    const res = await api.get(`/g/${gameUrlTag}`);
-    console.log(2);
+    const res = await api.get(`/g/${gameUrlTag}`); // send GET request
     if (res.data && res.data.success) {
-      // successful data
-      console.log(3);
       return res.data;
     }
-    console.log(4);
     throw new Error("Failed to retrieve game. Please try again.");
   } catch (e) {
-    console.log(5);
-    console.log(e);
-    console.log(6);
+    // manually create & return error response
     return {
       success: false,
       message: e.response ? e.response.data.message : e.message || e,
@@ -41,11 +33,14 @@ async function getGame(gameUrlTag) {
 // Create Game
 async function createGame(gameDetails) {
   try {
+    // game details + Supabase auth info
     const data = {
       session: await supabase.auth.getSession(),
       user_id: (await supabase.auth.getUser()).data.user.id,
       ...gameDetails,
     };
+
+    // send POST request
     const res = await api.post("/g/create", data, {
       timeout: 10000,
       withCredentials: true,
@@ -53,12 +48,14 @@ async function createGame(gameDetails) {
         "Content-Type": "application/json",
       },
     });
+
     if (res.data && res.data.success) {
-      // successful data
       return res.data;
     }
+
     throw new Error("Failed to create game. Please try again.");
   } catch (e) {
+    // manually create & return error response
     return {
       success: false,
       message: e.response ? e.response.data.message : e.message || e,
@@ -66,5 +63,5 @@ async function createGame(gameDetails) {
   }
 }
 
-// export the service
+// export the service functions
 export { getGame, createGame };

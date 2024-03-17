@@ -1,3 +1,5 @@
+// https://supabase.com/docs/guides/auth/server-side/nextjs
+
 import { NextResponse } from "next/server";
 
 import createClient from "@/utils/supabase/server";

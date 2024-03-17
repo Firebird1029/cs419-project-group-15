@@ -1,4 +1,5 @@
 // https://github.com/vercel/examples/blob/main/python/nextjs-flask/next.config.js
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   rewrites: async () => {

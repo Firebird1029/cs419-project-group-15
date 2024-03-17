@@ -1,5 +1,7 @@
 import { Container, Heading } from "@chakra-ui/react";
 
+// TODO style this page
+
 export default function ErrorPage() {
   return (
     <Container>

@@ -8,15 +8,12 @@ from gotrue.errors import AuthApiError
 from flask_restful import Resource, Api, abort
 from postgrest.exceptions import APIError
 
-# from flask_cors import CORS
 from db import supabase
 
 # Setup Flask app and API
-# TODO setup CORS
 app = Flask(__name__)
 app.secret_key = "super secret key"  # TODO change key, move to separate file
 app.config["SESSION_TYPE"] = "filesystem"  # TODO change to something else in future
-# CORS(app)
 api = Api(app)
 
 
@@ -25,7 +22,6 @@ class Ping(Resource):
 
     def get(self):
         """Return pong for a successful ping."""
-        print("PING")
         return "pong"
 
 
@@ -93,12 +89,9 @@ class Game(Resource):
     def get(self, url_tag):
         """Get a game by its URL tag."""
         try:
-            print("PING 1")
             res = supabase.table("games").select("*").eq("url_tag", url_tag).execute()
-            print("PING 2")
             return {"success": True, "data": res.data, "count": len(res.data)}
         except APIError as e:
-            print("PING 3", e)
             return {"success": False, "message": e.message, "count": 0}, 500
 
 
