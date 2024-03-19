@@ -23,6 +23,7 @@ export default async function register({ username, email, password }) {
   const { error } = await supabase.auth.signUp(data);
 
   if (error) {
+    // TODO handle error.message if necessary
     redirect("/error");
   }
 

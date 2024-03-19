@@ -20,6 +20,7 @@ export default async function login({ email, password }) {
   const { error } = await supabase.auth.signInWithPassword(data);
 
   if (error) {
+    // TODO handle error.message if necessary
     redirect("/error");
   }
 
