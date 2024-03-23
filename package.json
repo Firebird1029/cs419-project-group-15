@@ -1,22 +1,49 @@
 {
-  "name": "cs419-project-group-15",
-  "version": "1.0.0",
-  "description": "",
+  "name": "project15",
+  "version": "0.1.0",
+  "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "prettier --write --config ./.prettierrc ."
+    "flask-dev": "pip3 install -r api/requirements.txt && python3 -m flask --app api/index run --debug -p 5328",
+    "next-dev": "next dev",
+    "dev": "concurrently \"npm run flask-dev\" \"npm run next-dev\" --kill-others",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint --fix --c .eslintrc.json --ext .js,.jsx,.mjs .; prettier --write --config ./.prettierrc .",
+    "lint:prod": "eslint --c .eslintrc.json --ext .js,.jsx,.mjs --max-warnings 0 . && prettier --check --config ./.prettierrc .",
+    "prepare": "husky install"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Firebird1029/cs419-project-group-15.git"
+  "dependencies": {
+    "@chakra-ui/next-js": "^2.2.0",
+    "@chakra-ui/react": "^2.8.2",
+    "@emotion/react": "^11.11.3",
+    "@emotion/styled": "^11.11.0",
+    "@supabase/ssr": "^0.1.0",
+    "@supabase/supabase-js": "^2.39.8",
+    "axios": "^1.6.7",
+    "concurrently": "^8.2.2",
+    "framer-motion": "^11.0.5",
+    "next": "14.1.0",
+    "react": "^18",
+    "react-dom": "^18"
   },
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/Firebird1029/cs419-project-group-15/issues"
-  },
-  "homepage": "https://github.com/Firebird1029/cs419-project-group-15#readme",
   "devDependencies": {
-    "prettier": "^3.2.4"
+    "eslint": "^8.56.0",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-config-next": "14.1.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-jsx-a11y": "^6.8.0",
+    "eslint-plugin-prettier": "^5.1.3",
+    "eslint-plugin-react": "^7.33.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "husky": "^9.0.11",
+    "lint-staged": "^15.2.2",
+    "prettier": "^3.2.5"
+  },
+  "lint-staged": {
+    "*.{js,jsx,mjs,css}": [
+      "eslint --cache --fix",
+      "prettier --write --config ./.prettierrc"
+    ]
   }
 }
