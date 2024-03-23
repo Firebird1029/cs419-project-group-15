@@ -1,3 +1,5 @@
+// https://supabase.com/docs/guides/auth/server-side/nextjs
+
 import updateSession from "@/utils/supabase/middleware";
 
 export async function middleware(request) {

@@ -15,7 +15,7 @@ jobs:
       - name: Install frontend modules
         run: npm ci
       - name: Lint frontend
-        run: npm run lint
+        run: npm run lint:prod
       - name: Install backend modules
         run: cd api && pip install -r requirements.txt && pip install pylint
       - name: Lint backend

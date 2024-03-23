@@ -14,13 +14,15 @@ import {
 } from "@chakra-ui/react";
 import { getGame } from "@/services/apiService";
 
+// Riddle Type Game
 function Riddle({ question, answer }) {
   const [guess, setGuess] = useState("");
   const [result, setResult] = useState("");
 
+  // check if user's guess matches the answer when "Guess" button is clicked
   function checkAnswer() {
     if (guess.toLowerCase() === answer.toLowerCase()) {
-      setResult("Correct!");
+      setResult("Correct!"); // TODO future add fun animations
     } else {
       setResult("Incorrect!");
     }
@@ -34,6 +36,7 @@ function Riddle({ question, answer }) {
             {question}
           </Heading>
         </Center>
+
         <Stack width="20rem" mb={12}>
           <Input
             type="text"
@@ -47,6 +50,7 @@ function Riddle({ question, answer }) {
             Guess
           </Button>
         </Stack>
+
         <Stack>
           <Text color={result === "Correct!" ? "green" : "red"}>
             <strong>{result}</strong>
@@ -57,10 +61,13 @@ function Riddle({ question, answer }) {
   );
 }
 
+// render correct component for the type of game
 function SelectGameType({ type, game }) {
   switch (type) {
     case "riddle":
       return <Riddle question={game.question} answer={game.answer} />;
+
+    // unimplemented game types -- code should never reach here
     case "":
     default:
       return <Container>Something went wrong!</Container>;
@@ -69,24 +76,28 @@ function SelectGameType({ type, game }) {
 
 export default function GamePage({ params: { slug } }) {
   const router = useRouter();
+
   const [loading, setLoading] = useState(true);
   const [game, setGame] = useState(null);
 
+  // on page load, call API to get game details from slug (game's url tag)
   useEffect(() => {
     getGame(slug)
       .then((res) => {
         if (res.success) {
           if (res.count > 0) {
-            setGame(res.data[0]); // return game that matches url tag
+            setGame(res.data[0]); // return game that matches url tag, if found in DB
           }
         } else {
+          // API call failed
           // TODO display error message in GUI
-          console.error(res.message);
+          console.error(res);
         }
+
         setLoading(false);
       })
       .catch((e) => {
-        console.error(e); // TODO
+        console.error(e); // TODO display error message in GUI
         router.push("/error");
       });
   }, []);
@@ -96,15 +107,19 @@ export default function GamePage({ params: { slug } }) {
       <Heading mt={4} mb={8}>
         {game && game.name}
       </Heading>
-      {/* eslint-disable-next-line no-nested-ternary */}
-      {loading
-        ? "Loading..."
-        : game
-          ? SelectGameType({
-              type: game.type,
-              game: JSON.parse(game.details),
-            })
-          : "Game not found!"}
+
+      {
+        // eslint-disable-next-line no-nested-ternary
+        loading
+          ? "Loading..." // before API call finishes, display loading message
+          : game
+            ? // if game found, render correct game component
+              SelectGameType({
+                type: game.type,
+                game: JSON.parse(game.details),
+              })
+            : "Game not found!" // if game not found, display error message
+      }
     </Container>
   );
 }

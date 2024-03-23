@@ -1,5 +1,7 @@
 "use client";
 
+// TODO add enter key to submit form handlers
+
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
@@ -23,6 +25,7 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  // check if user is already logged in
   useEffect(() => {
     (async () => {
       const {
@@ -31,12 +34,12 @@ export default function Login() {
 
       if (user) {
         // already logged in
-        router.push("/account");
+        router.replace("/account");
       } else {
         setLoading(false);
       }
     })().catch((err) => {
-      console.error(err);
+      console.error(err); // TODO display error message to user
       router.push("/error");
     });
   }, []);

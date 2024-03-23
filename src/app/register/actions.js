@@ -1,3 +1,5 @@
+// https://supabase.com/docs/guides/auth/server-side/nextjs
+
 "use server";
 
 import { revalidatePath } from "next/cache";
@@ -21,6 +23,7 @@ export default async function register({ username, email, password }) {
   const { error } = await supabase.auth.signUp(data);
 
   if (error) {
+    // TODO handle error.message if necessary
     redirect("/error");
   }
 

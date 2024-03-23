@@ -1,5 +1,7 @@
 "use client";
 
+// TODO add enter key to submit form handlers
+
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
@@ -13,40 +15,62 @@ import {
 import { createGame } from "@/services/apiService";
 import createClient from "@/utils/supabase/client";
 
-function SelectGameQuestions({ type, setGameDetails, setGameDetailsReady }) {
+// Riddle Type Game Configuration
+// riddles consist of two settings: question and answer
+function NewRiddle({ setGameDetails, setGameDetailsReady }) {
   const [userQuestion, setUserQuestion] = useState("");
   const [userAnswer, setUserAnswer] = useState("");
 
   useEffect(() => {
+    // notify parent component CreateNewGamePage that form is submittable (enable Create button)
     setGameDetails({ question: userQuestion, answer: userAnswer });
     setGameDetailsReady(userQuestion && userAnswer);
   }, [userQuestion, userAnswer]);
 
+  useEffect(() => {
+    // reset game configuration state when component is unmounted
+    return () => {
+      setGameDetails({});
+      setGameDetailsReady(false);
+    };
+  }, []);
+
+  return (
+    <div>
+      <Stack spacing={4} pt={12}>
+        <p>Question:</p>
+        <Input
+          placeholder=""
+          value={userQuestion}
+          onChange={(e) => setUserQuestion(e.target.value)}
+        />
+
+        <p>Answer:</p>
+        <Input
+          placeholder=""
+          value={userAnswer}
+          onChange={(e) => setUserAnswer(e.target.value)}
+        />
+      </Stack>
+    </div>
+  );
+}
+
+// display correct configuration for selected game type
+function SelectGameQuestions({ type, setGameDetails, setGameDetailsReady }) {
   switch (type) {
+    // Riddle Type Game
     case "riddle":
       return (
-        <div>
-          <Stack spacing={4} pt={12}>
-            <p>Question:</p>
-            <Input
-              placeholder=""
-              value={userQuestion}
-              onChange={(e) => setUserQuestion(e.target.value)}
-            />
-
-            <p>Answer:</p>
-            <Input
-              placeholder=""
-              value={userAnswer}
-              onChange={(e) => setUserAnswer(e.target.value)}
-            />
-          </Stack>
-        </div>
+        <NewRiddle
+          setGameDetails={setGameDetails}
+          setGameDetailsReady={setGameDetailsReady}
+        />
       );
-    case "":
-      return "";
+
+    // Unimplemented Game Types (should never be reached)
     default:
-      return <Container>Something went wrong!</Container>;
+      return "";
   }
 }
 
@@ -64,7 +88,7 @@ export default function CreateNewGamePage() {
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user }, error }) => {
       if (error || !user) {
-        router.push("/login");
+        router.replace("/login");
       } else {
         setLoading(false);
       }
@@ -93,11 +117,12 @@ export default function CreateNewGamePage() {
             onChange={(e) => setGameType(e.target.value)}
           >
             <option value="riddle">Riddle</option>
-            {/* TODO below */}
+            {/* TODO create new types of games and add below */}
             <option value="option2">Option 2</option>
             <option value="option3">Option 3</option>
           </Select>
 
+          {/* Game Type-Specific Configuration */}
           <Container py={4}>
             <SelectGameQuestions
               type={gameType}
@@ -111,11 +136,13 @@ export default function CreateNewGamePage() {
             mt={8}
             isDisabled={!gameName || !gameType || !gameDetailsReady}
             onClick={async () => {
+              // call API service to create new game
               const res = await createGame({
                 name: gameName,
                 type: gameType,
                 details: JSON.stringify(gameDetails),
               });
+
               if (res.success) {
                 // redirect user to newly-created game
                 router.push(`/g/${res.data[0].url_tag}`);

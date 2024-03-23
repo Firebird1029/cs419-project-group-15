@@ -1,5 +1,8 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 
+// https://supabase.com/docs/guides/auth/server-side/nextjs
+// TODO page needs styling
+
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
