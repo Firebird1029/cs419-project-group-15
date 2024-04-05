@@ -3,10 +3,10 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Container, Heading, Table } from "@chakra-ui/react";
-import { getScoreboard } from "@/services/apiService";
+import { getGame, getScoreboard } from "@/services/apiService";
 
-// Scoreboard GUI component
-function ScoreboardDisplay({ scores }) {
+// Scoreboard React component
+function Scoreboard({ scores }) {
   // TODO sorting by some metric (e.g. score) before displaying
   // TODO style table
   return (
@@ -38,24 +38,40 @@ function ScoreboardDisplay({ scores }) {
   );
 }
 
-export default function GameScoreboardPage({ params: { slug } }) {
+export default function GameDetailsPage({ params: { slug } }) {
   const router = useRouter();
 
   const [loading, setLoading] = useState(true);
+  const [game, setGame] = useState(null);
   const [scores, setScores] = useState([]);
 
-  // on page load, call API to get game's scoreboard from slug (game's url tag)
+  // on page load, call API to get game details from slug (game's url tag)
   useEffect(() => {
-    getScoreboard(slug)
+    getGame(slug)
       .then((res) => {
         if (res.success) {
           if (res.count > 0) {
-            setScores(res.data); // return game scores from game that matches url tag, if found in DB
-          } else {
-            // TODO either game url tag is wrong (game doesn't exist) or scoreboard is empty
+            setGame(res.data[0]); // set game that matches url tag, if found in DB
+
+            // get game's scoreboard via different API call
+            // TODO theoretically can run in parallel with getGame
+            getScoreboard(slug)
+              .then((scoreboardRes) => {
+                if (scoreboardRes.success) {
+                  setScores(scoreboardRes.data); // set game scores, even if empty
+                } else {
+                  // getScoreboard API call failed
+                  // TODO display error message in GUI
+                  console.error(scoreboardRes);
+                }
+              })
+              .catch((e) => {
+                console.error(e); // TODO display error message in GUI
+                router.push("/error");
+              });
           }
         } else {
-          // API call failed
+          // getGame API call failed
           // TODO display error message in GUI
           console.error(res);
         }
@@ -71,7 +87,7 @@ export default function GameScoreboardPage({ params: { slug } }) {
   return (
     <Container>
       <Heading mt={4} mb={8}>
-        {scores && scores.name}
+        {game && game.name}
       </Heading>
 
       {
@@ -80,10 +96,10 @@ export default function GameScoreboardPage({ params: { slug } }) {
           ? "Loading..." // before API call finishes, display loading message
           : scores
             ? // if scores found, render scoreboard component
-              ScoreboardDisplay({
+              Scoreboard({
                 scores,
               })
-            : "Game not found or scoreboard empty!" // if scores not found, display error message
+            : "Game not found!" // if game not found, display error message
       }
     </Container>
   );

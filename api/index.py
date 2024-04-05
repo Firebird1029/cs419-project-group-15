@@ -123,7 +123,7 @@ class Scoreboard(Resource):
         check_auth(req, req["user_id"])
 
         try:
-            game_id, profile_id, details = (
+            game_id, user_id, details = (
                 req["game_id"],
                 req["user_id"],
                 req["details"],
@@ -134,7 +134,7 @@ class Scoreboard(Resource):
                 supabase.table("scoreboard_games_profiles")
                 .select("*")
                 .eq("game_id", game_id)
-                .eq("profile_id", profile_id)
+                .eq("user_id", user_id)
                 .execute()
             )
 
@@ -148,7 +148,7 @@ class Scoreboard(Resource):
                     .insert(
                         {
                             "game_id": game_id,
-                            "profile_id": profile_id,
+                            "user_id": user_id,
                             "details": details,
                         }
                     )
