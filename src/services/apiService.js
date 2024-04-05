@@ -3,6 +3,8 @@
 import axios from "axios";
 import createClient from "@/utils/supabase/server";
 
+// TODO refactor to generalize code
+
 // Create Axios instance
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_VERCEL_URL
@@ -63,5 +65,55 @@ async function createGame(gameDetails) {
   }
 }
 
+// Get & Update Scoreboard
+async function getScoreboard(gameUrlTag) {
+  try {
+    const res = await api.get(`/g/${gameUrlTag}/scoreboard`); // send GET request
+    if (res.data && res.data.success) {
+      return res.data;
+    }
+    throw new Error("Failed to retrieve scoreboard. Please try again.");
+  } catch (e) {
+    // manually create & return error response
+    return {
+      success: false,
+      message: e.response ? e.response.data.message : e.message || e,
+    };
+  }
+}
+
+async function updateScoreboard(gameUrlTag, gameId, submissionDetails) {
+  try {
+    // game details + Supabase auth info
+    const data = {
+      session: await supabase.auth.getSession(),
+      user_id: (await supabase.auth.getUser()).data.user.id,
+      game_id: gameId,
+      details: submissionDetails,
+    };
+
+    // send POST request
+    const res = await api.post(`/g/${gameUrlTag}/scoreboard`, data, {
+      timeout: 10000,
+      withCredentials: true,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (res.data && res.data.success) {
+      return res.data;
+    }
+
+    throw new Error("Failed to update scoreboard. Please try again.");
+  } catch (e) {
+    // manually create & return error response
+    return {
+      success: false,
+      message: e.response ? e.response.data.message : e.message || e,
+    };
+  }
+}
+
 // export the service functions
-export { getGame, createGame };
+export { getGame, createGame, getScoreboard, updateScoreboard };

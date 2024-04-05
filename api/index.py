@@ -96,3 +96,69 @@ class Game(Resource):
 
 
 api.add_resource(Game, "/api/g/<string:url_tag>")
+
+
+class Scoreboard(Resource):
+    """Scoreboard"""
+
+    def get(self, url_tag):
+        """Get the scoreboard for an existing game."""
+        try:
+            res = (
+                supabase.table("scoreboard_games_profiles")
+                .select("*, games!inner(url_tag)")
+                .eq("games.url_tag", url_tag)
+                .execute()
+            )
+            return {"success": True, "data": res.data, "count": len(res.data)}
+        except APIError as e:
+            return {"success": False, "message": e.message, "count": 0}, 500
+
+    def post(self, url_tag):
+        """Add or update a user to the scoreboard for an existing game."""
+        req = request.get_json()
+        check_auth(req, req["user_id"])
+
+        try:
+            game_id, profile_id, details = (
+                req["game_id"],
+                req["user_id"],
+                req["details"],
+            )
+
+            # see if user has previous scoreboard submission
+            res = (
+                supabase.table("scoreboard_games_profiles")
+                .select("*")
+                .eq("game_id", game_id)
+                .eq("profile_id", profile_id)
+                .execute()
+            )
+
+            if len(res.data) > 0:
+                # TODO if user has previous submission, update it
+                return {"success": True, "data": res.data, "count": len(res.data)}
+            else:
+                # if user has no previous submission, insert new row
+                res = (
+                    supabase.table("scoreboard_games_profiles")
+                    .insert(
+                        {
+                            "game_id": game_id,
+                            "profile_id": profile_id,
+                            "details": details,
+                        }
+                    )
+                    .execute()
+                )
+
+                return {"success": True, "data": res.data, "count": len(res.data)}
+
+        except APIError as e:
+            return {
+                "success": False,
+                "message": e.message,
+            }, 500
+
+
+api.add_resource(Scoreboard, "/api/g/<string:url_tag>/scoreboard")
