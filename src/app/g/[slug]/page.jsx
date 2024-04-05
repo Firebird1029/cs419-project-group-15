@@ -12,6 +12,7 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react";
+import createClient from "@/utils/supabase/client";
 import { getGame, updateScoreboard } from "@/services/apiService";
 
 // Riddle Type Game
@@ -84,6 +85,7 @@ function SelectGameType({ type, game, saveToScoreboard }) {
 
 export default function GamePage({ params: { slug } }) {
   const router = useRouter();
+  const supabase = createClient();
 
   const [loading, setLoading] = useState(true);
   const [game, setGame] = useState(null);
@@ -113,6 +115,11 @@ export default function GamePage({ params: { slug } }) {
   // function that calls API service to update scoreboard
   const saveToScoreboard = useCallback(
     async (details) => {
+      // only update scoreboard if logged in
+      if (!(await supabase.auth.getUser()).data.user) {
+        return;
+      }
+
       const res = await updateScoreboard(slug, game.id, details);
       if (!res.success) {
         console.error(res.message); // TODO show in GUI

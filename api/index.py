@@ -103,10 +103,13 @@ class Scoreboard(Resource):
 
     def get(self, url_tag):
         """Get the scoreboard for an existing game."""
+
+        # TODO get game id from url_tag then filter scoreboard, don't filter by foreign key
+
         try:
             res = (
                 supabase.table("scoreboard_games_profiles")
-                .select("*, games!inner(url_tag)")
+                .select("*, games!inner(url_tag), profiles!inner(username)")
                 .eq("games.url_tag", url_tag)
                 .execute()
             )
