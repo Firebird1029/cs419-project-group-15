@@ -115,5 +115,63 @@ async function updateScoreboard(gameUrlTag, gameId, submissionDetails) {
   }
 }
 
+// Get & Update Ratings
+async function getRatings(gameUrlTag) {
+  try {
+    const res = await api.get(`/g/${gameUrlTag}/rating`); // send GET request
+    if (res.data && res.data.success) {
+      return res.data;
+    }
+    throw new Error("Failed to retrieve ratings. Please try again.");
+  } catch (e) {
+    // manually create & return error response
+    return {
+      success: false,
+      message: e.response ? e.response.data.message : e.message || e,
+    };
+  }
+}
+
+async function createRating(gameUrlTag, gameId, rating, comment) {
+  try {
+    // game details + Supabase auth info
+    const data = {
+      session: await supabase.auth.getSession(),
+      user_id: (await supabase.auth.getUser()).data.user.id,
+      game_id: gameId,
+      rating,
+      comment,
+    };
+
+    // send POST request
+    const res = await api.post(`/g/${gameUrlTag}/rating`, data, {
+      timeout: 10000,
+      withCredentials: true,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (res.data && res.data.success) {
+      return res.data;
+    }
+
+    throw new Error("Failed to update ratings. Please try again.");
+  } catch (e) {
+    // manually create & return error response
+    return {
+      success: false,
+      message: e.response ? e.response.data.message : e.message || e,
+    };
+  }
+}
+
 // export the service functions
-export { getGame, createGame, getScoreboard, updateScoreboard };
+export {
+  getGame,
+  createGame,
+  getScoreboard,
+  updateScoreboard,
+  getRatings,
+  createRating,
+};
