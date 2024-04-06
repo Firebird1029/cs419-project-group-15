@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   Box,
@@ -93,7 +94,14 @@ function CreateRating({
   ratingCreated,
 }) {
   if (!user) {
-    return <Box>Log in to rate this game.</Box>;
+    return (
+      <Box>
+        <Link href="/login">
+          <Button variant="link">Log in</Button>
+        </Link>{" "}
+        to rate this game.
+      </Box>
+    );
   }
 
   if (ratingCreated) {
