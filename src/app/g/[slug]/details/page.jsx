@@ -257,6 +257,12 @@ export default function GameDetailsPage({ params: { slug } }) {
       <Heading mt={4} mb={8}>
         {game && game.name}
       </Heading>
+
+      <Box>
+        <Button colorScheme="blue" onClick={() => router.push(`/g/${slug}`)}>
+          Play Game
+        </Button>
+      </Box>
       {
         // eslint-disable-next-line no-nested-ternary
         loading ? (
@@ -264,18 +270,22 @@ export default function GameDetailsPage({ params: { slug } }) {
         ) : game ? (
           // if game found, render details
           <>
-            {
-              // Scoreboard
-              scores &&
-                Scoreboard({
-                  scores,
-                })
-            }
+            <Box mt={12}>
+              {
+                // Scoreboard
+                scores &&
+                  Scoreboard({
+                    scores,
+                  })
+              }
+            </Box>
 
-            {
-              // Ratings
-              Ratings({ ratings })
-            }
+            <Box mt={12}>
+              {
+                // Ratings
+                Ratings({ ratings })
+              }
+            </Box>
           </>
         ) : (
           "Game not found!"

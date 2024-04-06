@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
+  Box,
   Button,
   Center,
   Container,
@@ -133,6 +134,15 @@ export default function GamePage({ params: { slug } }) {
       <Heading mt={4} mb={8}>
         {game && game.name}
       </Heading>
+
+      <Box my={12}>
+        <Button
+          colorScheme="blue"
+          onClick={() => router.push(`/g/${slug}/details`)}
+        >
+          Details
+        </Button>
+      </Box>
 
       {
         // eslint-disable-next-line no-nested-ternary
