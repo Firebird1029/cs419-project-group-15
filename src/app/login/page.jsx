@@ -51,7 +51,7 @@ export default function Login() {
           Login
         </Heading>
         <Stack spacing={4}>
-          <p>Username/Email:</p>
+          <p>Email:</p>
           <Input
             placeholder=""
             value={email}

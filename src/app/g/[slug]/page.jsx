@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
+  Box,
   Button,
   Center,
   Container,
@@ -12,10 +13,11 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react";
-import { getGame } from "@/services/apiService";
+import createClient from "@/utils/supabase/client";
+import { getGame, updateScoreboard } from "@/services/apiService";
 
 // Riddle Type Game
-function Riddle({ question, answer }) {
+function Riddle({ question, answer, saveToScoreboard }) {
   const [guess, setGuess] = useState("");
   const [result, setResult] = useState("");
 
@@ -23,6 +25,8 @@ function Riddle({ question, answer }) {
   function checkAnswer() {
     if (guess.toLowerCase() === answer.toLowerCase()) {
       setResult("Correct!"); // TODO future add fun animations
+
+      saveToScoreboard({});
     } else {
       setResult("Incorrect!");
     }
@@ -62,10 +66,16 @@ function Riddle({ question, answer }) {
 }
 
 // render correct component for the type of game
-function SelectGameType({ type, game }) {
+function SelectGameType({ type, game, saveToScoreboard }) {
   switch (type) {
     case "riddle":
-      return <Riddle question={game.question} answer={game.answer} />;
+      return (
+        <Riddle
+          question={game.question}
+          answer={game.answer}
+          saveToScoreboard={saveToScoreboard}
+        />
+      );
 
     // unimplemented game types -- code should never reach here
     case "":
@@ -76,6 +86,7 @@ function SelectGameType({ type, game }) {
 
 export default function GamePage({ params: { slug } }) {
   const router = useRouter();
+  const supabase = createClient();
 
   const [loading, setLoading] = useState(true);
   const [game, setGame] = useState(null);
@@ -102,11 +113,36 @@ export default function GamePage({ params: { slug } }) {
       });
   }, []);
 
+  // function that calls API service to update scoreboard
+  const saveToScoreboard = useCallback(
+    async (details) => {
+      // only update scoreboard if logged in
+      if (!(await supabase.auth.getUser()).data.user) {
+        return;
+      }
+
+      const res = await updateScoreboard(slug, game.id, details);
+      if (!res.success) {
+        console.error(res.message); // TODO show in GUI
+      }
+    },
+    [game],
+  );
+
   return (
     <Container>
       <Heading mt={4} mb={8}>
         {game && game.name}
       </Heading>
+
+      <Box my={12}>
+        <Button
+          colorScheme="blue"
+          onClick={() => router.push(`/g/${slug}/details`)}
+        >
+          Details
+        </Button>
+      </Box>
 
       {
         // eslint-disable-next-line no-nested-ternary
@@ -117,6 +153,7 @@ export default function GamePage({ params: { slug } }) {
               SelectGameType({
                 type: game.type,
                 game: JSON.parse(game.details),
+                saveToScoreboard,
               })
             : "Game not found!" // if game not found, display error message
       }
