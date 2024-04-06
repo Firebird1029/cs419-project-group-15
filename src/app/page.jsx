@@ -19,6 +19,12 @@ export default async function Home() {
 
       {/* TODO move these links to navbar etc */}
 
+      <Box mb={12}>
+        <Link as={NextLink} href="/gallery">
+          <Button colorScheme="blue">Gallery</Button>
+        </Link>
+      </Box>
+
       {user && (
         <Box mb={16}>
           <Link as={NextLink} href="/account">
