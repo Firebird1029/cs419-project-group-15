@@ -96,3 +96,149 @@ class Game(Resource):
 
 
 api.add_resource(Game, "/api/g/<string:url_tag>")
+
+
+class Scoreboard(Resource):
+    """Scoreboard"""
+
+    def get(self, url_tag):
+        """Get the scoreboard for an existing game."""
+
+        # TODO get game id from url_tag then filter scoreboard, don't filter by foreign key
+
+        try:
+            res = (
+                supabase.table("scoreboard_games_profiles")
+                .select("*, games!inner(url_tag), profiles!inner(username)")
+                .eq("games.url_tag", url_tag)
+                .execute()
+            )
+            return {"success": True, "data": res.data, "count": len(res.data)}
+        except APIError as e:
+            return {"success": False, "message": e.message, "count": 0}, 500
+
+    def post(self, url_tag):
+        """Add or update a user to the scoreboard for an existing game."""
+        req = request.get_json()
+        check_auth(req, req["user_id"])
+
+        try:
+            game_id, user_id, details = (
+                req["game_id"],
+                req["user_id"],
+                req["details"],
+            )
+
+            # see if user has previous scoreboard submission
+            res = (
+                supabase.table("scoreboard_games_profiles")
+                .select("*")
+                .eq("game_id", game_id)
+                .eq("user_id", user_id)
+                .execute()
+            )
+
+            if len(res.data) > 0:
+                # TODO if user has previous submission, update it
+                return {"success": True, "data": res.data, "count": len(res.data)}
+            else:
+                # if user has no previous submission, insert new row
+                res = (
+                    supabase.table("scoreboard_games_profiles")
+                    .insert(
+                        {
+                            "game_id": game_id,
+                            "user_id": user_id,
+                            "details": details,
+                        }
+                    )
+                    .execute()
+                )
+
+                return {"success": True, "data": res.data, "count": len(res.data)}
+
+        except APIError as e:
+            return {
+                "success": False,
+                "message": e.message,
+            }, 500
+
+
+api.add_resource(Scoreboard, "/api/g/<string:url_tag>/scoreboard")
+
+
+class Rating(Resource):
+    """Ratings & Comments"""
+
+    def get(self, url_tag):
+        """Get the ratings and comments for an existing game."""
+
+        # TODO get game id from url_tag then filter ratings, don't filter by foreign key
+        # TODO do this for both get and post, update apiService.js to query by game id not url_tag
+
+        try:
+            res = (
+                supabase.table("ratings")
+                .select("*, games!inner(url_tag), profiles!inner(id, username)")
+                .eq("games.url_tag", url_tag)
+                .execute()
+            )
+            return {"success": True, "data": res.data, "count": len(res.data)}
+        except APIError as e:
+            return {"success": False, "message": e.message, "count": 0}, 500
+
+    def post(self, url_tag):
+        """Create a new rating/comment for an existing game."""
+        req = request.get_json()
+        check_auth(req, req["user_id"])
+
+        try:
+            game_id, user_id, rating, comment = (
+                req["game_id"],
+                req["user_id"],
+                req["rating"],
+                req["comment"],
+            )
+
+            # see if user has previously left a rating/comment
+            res = (
+                supabase.table("ratings")
+                .select("*")
+                .eq("game_id", game_id)
+                .eq("user_id", user_id)
+                .execute()
+            )
+
+            if len(res.data) > 0:
+                # user has already left a rating/comment
+                return {
+                    "success": False,
+                    "message": "You have already left a rating/comment for this game.",
+                }
+            else:
+                # if user has no previous rating/comment, insert new row
+                res = (
+                    supabase.table("ratings")
+                    .insert(
+                        {
+                            "game_id": game_id,
+                            "user_id": user_id,
+                            "rating": rating,
+                            "comment": comment,
+                        }
+                    )
+                    .execute()
+                )
+
+                return {"success": True, "data": res.data, "count": len(res.data)}
+
+        except APIError as e:
+            return {
+                "success": False,
+                "message": e.message,
+            }, 500
+
+    # TODO put method to update rating/comment
+
+
+api.add_resource(Rating, "/api/g/<string:url_tag>/rating")

@@ -25,5 +25,6 @@ export default async function login({ email, password }) {
   }
 
   revalidatePath("/", "layout");
-  redirect("/account");
+  // redirect("/account");
+  redirect("/");
 }
