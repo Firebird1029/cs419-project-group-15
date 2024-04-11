@@ -12,6 +12,7 @@ import {
   Td,
   Tfoot,
 } from "@chakra-ui/react";
+import Link from "next/link";
 import createClient from "@/utils/supabase/server";
 
 export default async function GalleryPage() {
@@ -45,16 +46,20 @@ export default async function GalleryPage() {
             </Tr>
           </Thead>
           <Tbody>
-            {allGames.map(({ id, name, type, profiles: { username } }) => (
-              <Tr key={id}>
-                <Td>{name}</Td>
-                <Td>{type}</Td>
-                <Td>{username}</Td>
-                <Td>
-                  <Button colorScheme="green">Play</Button>
-                </Td>
-              </Tr>
-            ))}
+            {allGames.map(
+              ({ id, name, type, url_tag: url, profiles: { username } }) => (
+                <Tr key={id}>
+                  <Td>{name}</Td>
+                  <Td>{type}</Td>
+                  <Td>{username}</Td>
+                  <Td>
+                    <Link href={`/g/${url}`}>
+                      <Button colorScheme="green">Play</Button>
+                    </Link>
+                  </Td>
+                </Tr>
+              ),
+            )}
           </Tbody>
           <Tfoot>
             <Tr>
