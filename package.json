@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "flask-dev": "pip3 install -r api/requirements.txt && python3 -m flask --app api/index run --debug -p 5328",
+    "flask-dev": "pip install -r api/requirements.txt && python -m flask --app api/index run --debug -p 5328",
     "next-dev": "next dev",
     "dev": "concurrently \"npm run flask-dev\" \"npm run next-dev\" --kill-others",
     "build": "next build",
