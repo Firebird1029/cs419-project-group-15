@@ -50,20 +50,14 @@ const NavLink = (props) => {
 export default function Nav({user}) {
   const { colorMode, toggleColorMode } = useColorMode();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  // const user = checkUser;
-  
-  // console.log("this is the user id: ", user.id)
 
   const supabase = createClient();
-  const [loading, setLoading] = useState(true);
   const [fullname, setFullname] = useState(null);
   const [username, setUsername] = useState(null);
   const [avatarUrl, setAvatarUrl] = useState(null);
 
   const getProfile = useCallback(async () => {
     try {
-      // setLoading(true);
-
       const { data, error, status } = await supabase
         .from("profiles")
         .select(`full_name, username, website, avatar_url`)
@@ -83,8 +77,6 @@ export default function Nav({user}) {
     } catch (error) {
       // alert("Error loading user data! :(");
       console.log(error);
-    } finally {
-      // setLoading(false);
     }
   }, [user, supabase]);
 
@@ -96,17 +88,19 @@ export default function Nav({user}) {
     <>
       <Box bg={useColorModeValue('gray.100', 'gray.900')} px={4}>
         <Flex h={16} alignItems={'center'} justifyContent={'space-between'}>
-          <Drawer/>
+          <Drawer user={user}/>
           <Box>
-            <Image
-              width="100%"
-              maxWidth="280px" // Set maximum width
-              maxHeight="auto"
-              objectFit='cover'
-              borderRadius='full'
-              src="/mindmatrix.png"
-              alt="Logo of the website"
-            />
+            <Link as={NextLink} href="/">
+              <Image
+                width="100%"
+                maxWidth="280px" // Set maximum width
+                maxHeight="auto"
+                objectFit='cover'
+                borderRadius='full'
+                src="/mindmatrix.png"
+                alt="Logo of the website"
+              />
+            </Link>
           </Box>
           <Flex alignItems={'center'}>
             <Stack direction={'row'} spacing={7}>

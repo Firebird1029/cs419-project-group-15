@@ -18,7 +18,7 @@ import { HamburgerIcon } from '@chakra-ui/icons';
 import React from 'react'
 // import NextLink from "next/link";
 
-export default function DrawerMenu() {
+export default function DrawerMenu({user}) {
     const { isOpen, onOpen, onClose } = useDisclosure()
     const [placement] = React.useState('left')
 
@@ -52,17 +52,22 @@ export default function DrawerMenu() {
                   </Link>
                 </Box>
 
-                <Box>
-                  <Button boxSize={"full"} height={10}>
-                    Account
-                  </Button>
-                </Box>
-
-                <Box>
-                  <Button boxSize={"full"} height={10}>
-                    Create Game
-                  </Button>
-                </Box>
+                {user && (<Box>
+                  <Link as={NextLink} href="/account">
+                    <Button boxSize={"full"} height={10}>
+                      Account
+                    </Button>
+                  </Link>
+                </Box>)}
+                
+                <Link as={NextLink} href="/create">
+                    <Box>
+                    <Button boxSize={"full"} height={10}>
+                      Create Game
+                    </Button>
+                  </Box>
+                </Link>
+                
               </Stack>
             </DrawerBody>
           </DrawerContent>

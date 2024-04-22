@@ -24,15 +24,7 @@ import ChakraCarousel from "./ChakraCarousel";
 
 export default function App() {
   const supabase = createClient();
-  // const [data, setData] = useState([]);
   const [data, setData] = useState([]);
-  const [idarray, setId] = useState([]);
-  const [namearray, setName] = useState([]);
-  const [typearray, setType] = useState([]);
-  const [urlarray, setUrl] = useState([]);
-  const [profilearray, setProfile] = useState([]);
-  const [userarray, setUser] = useState([]);
-
 
   const allGames = useCallback(async () => {
     try {
