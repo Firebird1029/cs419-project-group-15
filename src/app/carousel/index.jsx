@@ -43,77 +43,21 @@ export default function App() {
       }
 
       if (data) {
-        var ids = [];
-        var names = [];
-        var types = [];
-        var urls = [];
-        var profiles = [];
-        var usernames = [];
-        {allGameData.map(
-          ({ id, name, type, url_tag: url, profiles: { username } }) => (
-            function() {
-              console.log("goerejfldsa")
-              ids.push(id);
-              names.push(name);
-              types.push(type);
-              urls.push(url);
-              profiles.push(profiles);
-              usernames.push(username);
-            }
-          ),)};
-        setId(ids);
-        setName(names);
-        setType(types);
-        setUrl(urls);
-        setProfile(profiles);
-        setUser(usernames);
-        // setData(allGameData);
+        setData(allGameData);
       }
     } catch (error) {
-      // alert("Error loading user data!");
+      alert("Error loading games!");
       console.log(error);
     }
   }, [supabase]);
 
-  // useEffect(() => {
-  //   allGames();
-  //   // console.log(data)
-  //   {namearray.map(
-  //     ({name}) => (
-  //       console.log("GOT HERE111")
-  //     ),)};
-  //   // {data.map(
-  //   //   ({ id, name, type, url_tag: url, profiles: { username } }) => (
-  //   //     // console.log("name: ", name);
-  //   //     console.log("JFKLASJKLDJFL")
-  //   //   ),)};
-  // }, [allGames]);
-
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       // Fetch data from server-side route
-  //       const response = await fetch('/api/getData');
-  //       const responseData = await response.json();
-  //       setData(responseData);
-  //     } catch (error) {
-  //       console.error('Error fetching data from server:', error);
-  //     }
-  //   };
-
-  //   fetchData();
-  // }, []);
-
   useEffect(() => {
-    fetch("https://jsonplaceholder.typicode.com/posts/")
-      .then((res) => res.json())
-      .then((res) => setData(res));
-  }, []);
+    allGames();
+  }, [allGames]);
 
   return (
     
     <ChakraProvider theme={extendTheme(theme)}>
-      {/* <Text>{data}</Text> */}
       <Container
         py={8}
         px={0}
@@ -127,10 +71,8 @@ export default function App() {
         }}
       >
         <ChakraCarousel gap={32}>
-          {data.slice(5, 15).map((post, index) => (
-              // <Text>{name}</Text>
+          {data.map(({id, name, type, url_tag: url, profiles: { username }}) => (
             <Flex
-              // key={index}
               boxShadow="rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px"
               justifyContent="space-between"
               flexDirection="column"
@@ -148,30 +90,30 @@ export default function App() {
                   w="full"
                   mb={2}
                 >
-                  {capsFirst(post.title)}
+                  {capsFirst(name)}
                 </Heading>
-                <Text w="full">{capsFirst(post.body)}</Text>
+                <Text w="full">{capsFirst(id)}</Text>
               </VStack>
 
               <Flex justifyContent="space-between">
                 <HStack spacing={2}>
                   <Tag size="sm" variant="outline" colorScheme="green">
-                    User: {post.userId}
+                    User: {username}
                   </Tag>
                   <Tag size="sm" variant="outline" colorScheme="cyan">
-                    Type: {post.id - 5}
+                    Type: {type}
                   </Tag>
                 </HStack>
-                {/* <Link href={`/g/${name}`}> */}
+                <Link href={`/g/${url}`}>
                   <Button
                     colorScheme="green"
                     fontWeight="bold"
                     color="gray.900"
                     size="sm"
                   >
-                    More
+                    Play
                   </Button>
-                {/* </Link> */}
+                </Link>
               </Flex>
             </Flex>
           ),
