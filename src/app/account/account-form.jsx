@@ -23,7 +23,7 @@ export default function AccountForm({ user }) {
 
       const { data, error, status } = await supabase
         .from("profiles")
-        .select(`full_name, username, website, avatar_url`)
+        .select(`full_name, username, website, avatar`)
         .eq("id", user.id)
         .single();
 

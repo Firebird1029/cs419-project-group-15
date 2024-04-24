@@ -54,13 +54,14 @@ export default function Nav({user}) {
   const supabase = createClient();
   const [fullname, setFullname] = useState(null);
   const [username, setUsername] = useState(null);
+  const [website, setWebsite] = useState(null);
   const [avatarUrl, setAvatarUrl] = useState(null);
 
   const getProfile = useCallback(async () => {
     try {
       const { data, error, status } = await supabase
         .from("profiles")
-        .select(`full_name, username, website, avatar_url`)
+        .select(`full_name, username, website, avatar`)
         .eq("id", user.id)
         .single();
 
@@ -72,7 +73,7 @@ export default function Nav({user}) {
         setFullname(data.full_name);
         setUsername(data.username);
         setWebsite(data.website);
-        setAvatarUrl(data.avatar_url);
+        setAvatarUrl("profile_"+data.avatar+".png");
       }
     } catch (error) {
       // alert("Error loading user data! :(");
@@ -117,7 +118,7 @@ export default function Nav({user}) {
                     minW={0}>
                     <Avatar
                       size={'sm'}
-                      src={'https://avatars.dicebear.com/api/male/username.svg'}
+                      src={avatarUrl}
                     />
                   </MenuButton>
                   <MenuList alignItems={'center'}>
@@ -125,13 +126,12 @@ export default function Nav({user}) {
                     <Center>
                       <Avatar
                         size={'2xl'}
-                        src={'https://avatars.dicebear.com/api/male/username.svg'}
+                        src={avatarUrl}
                       />
                     </Center>
                     <br />
                     <Center>
-                      {/* TODO replace with actual username... */}
-                      <p>{username}  </p>
+                      <p>{fullname} @{username}</p>
                     </Center>
                     <br />
                     <MenuDivider />

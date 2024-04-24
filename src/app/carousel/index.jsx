@@ -63,7 +63,7 @@ export default function App() {
         }}
       >
         <ChakraCarousel gap={32}>
-          {data.map(({id, name, type, url_tag: url, profiles: { username }}) => (
+          {data.map(({description, name, type, url_tag: url, profiles: { username }}) => (
             <Flex
               boxShadow="rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px"
               justifyContent="space-between"
@@ -84,7 +84,7 @@ export default function App() {
                 >
                   {capsFirst(name)}
                 </Heading>
-                <Text w="full">{capsFirst(id)}</Text>
+                <Text w="full">{capsFirst(description)}</Text>
               </VStack>
 
               <Flex justifyContent="space-between">
