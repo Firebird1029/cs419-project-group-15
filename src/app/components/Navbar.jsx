@@ -73,7 +73,7 @@ export default function Nav({user}) {
         setFullname(data.full_name);
         setUsername(data.username);
         setWebsite(data.website);
-        setAvatarUrl("profile_"+data.avatar+".png");
+        setAvatarUrl(data.avatar);
       }
     } catch (error) {
       // alert("Error loading user data! :(");

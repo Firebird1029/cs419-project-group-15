@@ -12,11 +12,10 @@ import {
   IconButton,
   Box,
   Link,
-  NextLink
 } from '@chakra-ui/react'
 import { HamburgerIcon } from '@chakra-ui/icons';
 import React from 'react'
-// import NextLink from "next/link";
+import NextLink from "next/link";
 
 export default function DrawerMenu({user}) {
     const { isOpen, onOpen, onClose } = useDisclosure()
