@@ -44,7 +44,7 @@ export default function DrawerMenu({user}) {
                 </Box>
 
                 <Box>
-                  <Link as={NextLink} href="/">
+                  <Link as={NextLink} href="/gallery">
                     <Button boxSize={"full"} height={10}>
                       Game Gallery
                     </Button>
