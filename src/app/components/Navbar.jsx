@@ -137,7 +137,9 @@ export default function Nav({user}) {
                     <MenuDivider />
                     <MenuItem as={NextLink} href={"/gallery"}>Your Games</MenuItem>
                     <MenuItem as={NextLink} href={"/account"}>Account Settings</MenuItem>
-                    <MenuItem>Logout</MenuItem>
+                    <form action="/auth/signout" method="post">
+                      <MenuItem className="button block" type="submit">Logout</MenuItem>
+                    </form>
                   </MenuList>
                 </Menu>
               )}
