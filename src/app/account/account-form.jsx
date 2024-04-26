@@ -24,8 +24,9 @@ import { Input,
           Button, 
           Image,
           Wrap,
-          WrapItem, AbsoluteCenter, Alert, AlertIcon, Spinner, AlertTitle, AlertDescription, CloseButton } from "@chakra-ui/react";
+          WrapItem, IconButton, Alert, AlertIcon, Spinner, AlertTitle, AlertDescription, CloseButton } from "@chakra-ui/react";
 import createClient from "@/utils/supabase/client";
+import React, { useRef } from 'react';
 
 export default function AccountForm({ user }) {
   const supabase = createClient();
@@ -42,6 +43,21 @@ export default function AccountForm({ user }) {
   const [originalName, setOGName] = useState(null);
   const [originalUserName, setOGUserName] = useState(null);
   const [originalAvatar, setOGAvatar] = useState(null);
+  const [selectedFile, setSelectedFile] = useState(null);
+
+  const fileInputRef = useRef(null);
+
+  const handleButtonClick = () => {
+    fileInputRef.current.click();
+  };
+
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    // setAvatarUrl(file);
+    setAvatarChange(true)
+    setSelectedFile(file)
+    // You can do further processing with the selected file here
+  };
 
   const disabledVariant = {
     base: {
@@ -102,6 +118,16 @@ export default function AccountForm({ user }) {
         avatar: avatarUrl,
         updated_at: new Date().toISOString(),
       });
+      
+      if (selectedFile) {
+        const { data, error } = await supabase
+        .storage
+        .from('profiles')
+        .upload('public/avatar1.png', selectedFile, {
+          cacheControl: '3600',
+          upsert: false
+        })
+      }
       if (error) throw error;
       setStatus(true);
     } catch (error) {
@@ -270,10 +296,27 @@ export default function AccountForm({ user }) {
                   {/* TODO: */}
                   {/* https://codesandbox.io/p/sandbox/basic-image-upload-e0e6d?file=%2Fsrc%2Findex.tsx */}
                   <WrapItem>
-                    <Avatar src='upload.png'
-                    onClick={() =>
-                      setAvatarUrl('upload.png')
-                    }/>
+                    <Button
+                      borderRadius='full'
+                      boxSize='55px'
+                      onClick={handleButtonClick} // Trigger file input click on button click
+                    >
+                      <Input
+                        ref={fileInputRef}
+                        type="file"
+                        onChange={handleFileChange} // Capture file selection
+                        height="100%"
+                        width="100%"
+                        position="absolute"
+                        top="0"
+                        left="0"
+                        opacity="0"
+                        aria-hidden="true"
+                        accept="image/*" // Adjust accept attribute to only accept image files
+                      />
+                      <Avatar src='upload-file.png' />
+                    </Button>
+                    
                   </WrapItem>
                 </Wrap>
               </Box>
