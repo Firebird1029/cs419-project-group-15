@@ -105,7 +105,11 @@ export default function AccountForm({ user }) {
       if (error) throw error;
       setStatus(true);
     } catch (error) {
-      setError(true);
+      if (error.code == 23505) {
+        setError("The username \"" + username + "\" is already taken. Please try a different username.")
+      } else {
+        setError("Errored with code " + error.code + "... Please try again.")
+      }
     } finally {
       setLoading(false);
     }
@@ -131,12 +135,6 @@ export default function AccountForm({ user }) {
   return (
     <Box>
           <Flex color='white'>
-        {/* <Center w='100px' bg='green.500' size='300px'>
-          <Text>Box 1</Text>
-        </Center> */}
-        {/* <Square bg='blue.500' size='200px'>
-          <Text>Box 2</Text>
-        </Square> */}
         <Box margin='9'>
           <Card maxW='sm' margin=''>
               <CardBody>
@@ -359,7 +357,7 @@ export default function AccountForm({ user }) {
             <Box>
               <AlertTitle>Error!</AlertTitle>
               <AlertDescription>
-                Error updating the data... Please try again.
+                Error updating the data. {error}
               </AlertDescription>
             </Box>
             <CloseButton
