@@ -36,6 +36,24 @@ export default function AccountForm({ user }) {
   const [avatarUrl, setAvatarUrl] = useState(null);
   const [status, setStatus] = useState(null);
   const [error, setError] = useState(null);
+  const [nameChanged, setNameChange] = useState(null);
+  const [usernameChanged, setUserChange] = useState(null);
+  const [avatarChanged, setAvatarChange] = useState(null);
+  const [originalName, setOGName] = useState(null);
+  const [originalUserName, setOGUserName] = useState(null);
+  const [originalAvatar, setOGAvatar] = useState(null);
+
+  const disabledVariant = {
+    base: {
+      bg: "gray.200", // Background color for disabled state
+      _hover: {
+        bg: "gray.200", // Hover background color for disabled state
+      },
+      _active: {
+        bg: "gray.200", // Active background color for disabled state
+      },
+    },
+  };
 
   const getProfile = useCallback(async () => {
     try {
@@ -56,6 +74,10 @@ export default function AccountForm({ user }) {
         setUsername(data.username);
         setWebsite(data.website);
         setAvatarUrl(data.avatar);
+
+        setOGName(data.full_name);
+        setOGUserName(data.username);
+        setOGAvatar(data.avatar);
       }
     } catch (error) {
       alert("Error loading user data!");
@@ -95,6 +117,15 @@ export default function AccountForm({ user }) {
 
   function closeError() {
     location.reload();
+  }
+
+  function avatarClicked(url) {
+    setAvatarUrl(url); 
+    if (originalAvatar == url) {
+      setAvatarChange(false);
+    } else {
+      setAvatarChange(true);
+    }
   }
 
   return (
@@ -143,7 +174,14 @@ export default function AccountForm({ user }) {
                 id="fullName"
                 type="text"
                 value={fullname || ""}
-                onChange={(e) => setFullname(e.target.value)}
+                onChange={function nameChanged(e) {
+                  setFullname(e.target.value); 
+                  if (originalName == e.target.value) {
+                    setNameChange(false);
+                  } else {
+                    setNameChange(true);
+                  }
+                }}
                 disabled={loading}
               />
               <label htmlFor="username">Username</label>
@@ -151,7 +189,14 @@ export default function AccountForm({ user }) {
                 id="username"
                 type="text"
                 value={username || ""}
-                onChange={(e) => setUsername(e.target.value)}
+                onChange={function usernameChanged(e) {
+                  setUsername(e.target.value); 
+                  if (originalUserName == e.target.value) {
+                    setUserChange(false);
+                  } else {
+                    setUserChange(true);
+                  }
+                }}
                 disabled={loading}
               />
               <Box margin='5'>
@@ -161,78 +206,67 @@ export default function AccountForm({ user }) {
                 <Wrap>
                   <WrapItem>
                     <Avatar src='profile_0.png'
-                    onClick={() =>
-                      setAvatarUrl('profile_0.png')
+                      onClick={function avatarClick() {avatarClicked('profile_0.png')}
                     }/>
                   </WrapItem>
                   
                   <WrapItem>
                     <Avatar src='profile_0.1.png'
-                    onClick={() =>
-                      setAvatarUrl('profile_0.1.png')
+                      onClick={function avatarClick() {avatarClicked('profile_0.1.png')}
                     }/>
                   </WrapItem>
                   
                   <WrapItem>
                     <Avatar src='profile_0.2.png'
-                    onClick={() =>
-                      setAvatarUrl('profile_0.2.png')
+                      onClick={function avatarClick() {avatarClicked('profile_0.2.png')}
                     }/>
                   </WrapItem>
                   
                   <WrapItem>
                     <Avatar src='profile_0.3.png'
-                    onClick={() =>
-                      setAvatarUrl('profile_0.3.png')
+                      onClick={function avatarClick() {avatarClicked('profile_0.3.png')}
                     }/>
                   </WrapItem>
                   
                   <WrapItem>
                     <Avatar src='profile_0.4.png'
-                    onClick={() =>
-                      setAvatarUrl('profile_0.4.png')
+                      onClick={function avatarClick() {avatarClicked('profile_0.4.png')}
                     }/>
                   </WrapItem>
                   
                   <WrapItem>
                     <Avatar src='profile_0.5.png'
-                    onClick={() =>
-                      setAvatarUrl('profile_0.5.png')
+                      onClick={function avatarClick() {avatarClicked('profile_0.5.png')}
                     }/>
                   </WrapItem>
                   
                   <WrapItem>
                     <Avatar src='profile_0.6.png'
-                    onClick={() =>
-                      setAvatarUrl('profile_0.6.png')
+                      onClick={function avatarClick() {avatarClicked('profile_0.6.png')}
                     }/>
                   </WrapItem>
 
                   <WrapItem>
                     <Avatar src='profile_1.png'
-                    onClick={() =>
-                      setAvatarUrl('profile_1.png')
+                      onClick={function avatarClick() {avatarClicked('profile_1.png')}
                     }/>
                   </WrapItem>
 
                   <WrapItem>
                     <Avatar src='profile_2.png'
-                    onClick={() =>
-                      setAvatarUrl('profile_2.png')
+                      onClick={function avatarClick() {avatarClicked('profile_2.png')}
                     }/>
                   </WrapItem>
 
                   <WrapItem>
                     <Avatar src='profile_3.png'
-                    onClick={() =>
-                      setAvatarUrl('profile_3.png')
+                      onClick={function avatarClick() {avatarClicked('profile_3.png')}
                     }/>
                   </WrapItem>
                   
                   <WrapItem>
                     <Avatar src='profile_4.png'
-                    onClick={() =>
-                      setAvatarUrl('profile_4.png')
+                      onClick={function avatarClick() {avatarClicked('profile_4.png')}
                     }/>
                   </WrapItem>
                   {/* TODO: */}
@@ -250,20 +284,23 @@ export default function AccountForm({ user }) {
             <Divider />
             <CardFooter>
               <ButtonGroup spacing='2'>
-                <Button 
-                  variant='solid' 
-                  colorScheme='blue'
-                  type="button"
-                  className="button primary block"
-                  onClick={() =>
-                    updateProfile({
-                      website,
-                    })
-                  }
-                  disabled={loading}
-                >
-                  {loading ? "Loading ..." : "Save Changes"}
-                </Button>
+              <Button 
+                // variant='solid' 
+                colorScheme='blue'
+                type="button"
+                className="button primary block"
+                disabled={loading || (!usernameChanged && !nameChanged && !avatarChanged)}
+                variant={loading || (!usernameChanged && !nameChanged && !avatarChanged) ? "disabled" : "solid"}
+                pointerEvents={loading || (!usernameChanged && !nameChanged && !avatarChanged) ? "none" : "auto"} // Disable pointer events when button is disabled
+                onClick={() =>
+                  updateProfile({
+                    website,
+                  })
+                }
+              >
+                {loading ? "Loading ..." : (!usernameChanged && !nameChanged && !avatarChanged) ? "No Changes" : "Save Changes"}
+              </Button>
+
                 <form action="/auth/signout" method="post">
                   <Button variant='ghost' colorScheme='blue' className="button block" type="submit">
                     Log Out
