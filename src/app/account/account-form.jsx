@@ -158,6 +158,7 @@ export default function AccountForm({ user }) {
         }
         var data = await getMedia();
         if (data) {
+          //https://stackoverflow.com/questions/77523252/the-image-is-not-re-loaded-from-supabase <Thank god for this
           var url = data.publicUrl + `?q=${Date.now()}`
           setAvatarUrl(url);
           const { error } = await supabase.from("profiles").upsert({
@@ -211,21 +212,16 @@ export default function AccountForm({ user }) {
                 <Box align='center'>
                   <Avatar
                     src={avatarUrl}
+                    height="330px"
+                    width="330px"
+                    borderRadius='50%'
                     alt='Users profile pic'
-                    size="3xl"
+                    object-fit= "cover"
                   />
                 </Box>
                 
                 <Stack mt='6' spacing='3'>
                   <Heading align='center' size='md'>{fullname} @ {username}</Heading>
-                  {/* <Text align='center'>
-                    This sofa is perfect for modern tropical spaces, baroque inspired
-                    spaces, earthy toned spaces and for people who love a chic design with a
-                    sprinkle of vintage design.
-                  </Text> */}
-                  {/* <Text color='blue.600' fontSize='2xl'>
-                    $450
-                  </Text> */}
                 </Stack>
               </CardBody>
                   
