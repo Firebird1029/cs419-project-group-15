@@ -55,7 +55,7 @@ export default function AccountForm({ user }) {
     const file = event.target.files[0];
     // setAvatarUrl(file);
     setAvatarChange(true)
-    setSelectedFile(file)
+    setSelectedFile(file);
     // You can do further processing with the selected file here
   };
 
@@ -107,6 +107,19 @@ export default function AccountForm({ user }) {
     getProfile();
   }, [user, getProfile]);
 
+  
+  const checkFileExists = async (bucketName, filePath) => {
+    const { data, error } = await supabase.storage
+      .from(bucketName)
+      .list(filePath)
+
+    if (error) {
+      console.error(error)
+      return false
+  }
+  return true;
+};
+
   async function updateProfile({website_}) {
     try {
       setLoading(true);
@@ -120,14 +133,24 @@ export default function AccountForm({ user }) {
       });
       
       if (selectedFile) {
-        const { data, error } = await supabase
-        .storage
-        .from('profiles')
-        .upload('public/avatar1.png', selectedFile, {
-          cacheControl: '3600',
-          upsert: false
-        })
+        var exists = await checkFileExists('pfps', user.id + "/uploaded-pfp");
+        if (!exists) {
+          const { data, error } = await supabase
+            .storage
+            .from('pfps')
+            .upload(user.id + "/uploaded-pfp", selectedFile)
+        } else {
+          const { data, error } = await supabase
+            .storage
+            .from('pfps')
+            .update(user.id + "/uploaded-pfp", selectedFile, {
+              cacheControl: '3600',
+              upsert: true
+            })
+        }
+        getMedia();
       }
+
       if (error) throw error;
       setStatus(true);
     } catch (error) {
@@ -138,6 +161,24 @@ export default function AccountForm({ user }) {
       }
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function getMedia() {
+    const { data } = supabase
+      .storage
+      .from('pfps')
+      .getPublicUrl(user.id + "/uploaded-pfp")
+
+    if (data) {
+      setAvatarUrl(data.publicUrl);
+      const { error } = await supabase.from("profiles").upsert({
+        id: user.id,
+        avatar: avatarUrl,
+        updated_at: new Date().toISOString(),
+      });
+    } else {
+      console.log(71, error);
     }
   }
 
