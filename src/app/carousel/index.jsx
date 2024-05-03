@@ -63,7 +63,8 @@ export default function App() {
         }}
       >
         <ChakraCarousel gap={32}>
-          {data.map(({id, description, name, type, url_tag: url, profiles: { username }}) => (
+          {/* TODO: instead of just limiting data from query, try to sort by rating for featured games */}
+          {data.slice(1, 10).map(({id, description, name, type, url_tag: url, profiles: { username }}) => (
             <Flex
               key={id}
               boxShadow="rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px"
