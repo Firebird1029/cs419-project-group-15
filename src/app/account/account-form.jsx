@@ -107,6 +107,14 @@ export default function AccountForm({ user }) {
     getProfile();
   }, [user, getProfile]);
 
+  async function getMedia() {
+    const { data } = supabase
+      .storage
+      .from('pfps')
+      .getPublicUrl(user.id + "/uploaded-pfp")
+
+    return data;
+  }
   
   const checkFileExists = async (bucketName, filePath) => {
     const { data, error } = await supabase.storage
@@ -140,15 +148,26 @@ export default function AccountForm({ user }) {
             .from('pfps')
             .upload(user.id + "/uploaded-pfp", selectedFile)
         } else {
+          
           const { data, error } = await supabase
             .storage
             .from('pfps')
             .update(user.id + "/uploaded-pfp", selectedFile, {
-              cacheControl: '3600',
               upsert: true
             })
         }
-        getMedia();
+        var data = await getMedia();
+        if (data) {
+          var url = data.publicUrl + `?q=${Date.now()}`
+          setAvatarUrl(url);
+          const { error } = await supabase.from("profiles").upsert({
+            id: user.id,
+            avatar: url,
+            updated_at: new Date().toISOString(),
+          });
+        } else {
+          console.log(71, error);
+        }
       }
 
       if (error) throw error;
@@ -164,23 +183,7 @@ export default function AccountForm({ user }) {
     }
   }
 
-  async function getMedia() {
-    const { data } = supabase
-      .storage
-      .from('pfps')
-      .getPublicUrl(user.id + "/uploaded-pfp")
-
-    if (data) {
-      setAvatarUrl(data.publicUrl);
-      const { error } = await supabase.from("profiles").upsert({
-        id: user.id,
-        avatar: avatarUrl,
-        updated_at: new Date().toISOString(),
-      });
-    } else {
-      console.log(71, error);
-    }
-  }
+  
 
   function closeSuccess() {
     location.reload();
@@ -334,8 +337,6 @@ export default function AccountForm({ user }) {
                       onClick={function avatarClick() {avatarClicked('profile_4.png')}
                     }/>
                   </WrapItem>
-                  {/* TODO: */}
-                  {/* https://codesandbox.io/p/sandbox/basic-image-upload-e0e6d?file=%2Fsrc%2Findex.tsx */}
                   <WrapItem>
                     <Button
                       borderRadius='full'
