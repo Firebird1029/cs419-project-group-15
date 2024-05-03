@@ -10,7 +10,7 @@ export default function Home() {
   return (
     <Box padding="50px">
       <Container maxW='container.xl'>
-        <Heading>Featured Games</Heading>
+        <Heading color='#8fffb2'>Featured Games</Heading>
         <Carousel />
       </Container>
     </Box>

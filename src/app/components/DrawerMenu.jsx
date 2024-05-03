@@ -14,12 +14,42 @@ import {
   Link,
 } from '@chakra-ui/react'
 import { HamburgerIcon } from '@chakra-ui/icons';
-import React from 'react'
+import { useCallback, useEffect, useState } from "react";
+import React, { useRef } from 'react';
+import createClient from "@/utils/supabase/client";
 import NextLink from "next/link";
 
 export default function DrawerMenu({user}) {
     const { isOpen, onOpen, onClose } = useDisclosure()
     const [placement] = React.useState('left')
+    const [username, setUsername] = useState(null);
+    const supabase = createClient();
+    
+    const getProfile = useCallback(async () => {
+      try {
+        const { data, error, status } = await supabase
+          .from("profiles")
+          .select(`username`)
+          .eq("id", user.id)
+          .single();
+  
+        if (error && status !== 406) {
+          throw error;
+        }
+  
+        if (data) {
+          setUsername(data.username);
+        }
+      } catch (error) {
+        alert("Error loading user data!");
+        console.log(error);
+      }
+    }, [user, supabase]);
+
+    useEffect(() => {
+      getProfile();
+    }, [user, getProfile]);
+  
 
     // Stretch TODO: Read which page and initialFocusRef={rightbutton} based on page
   
@@ -52,8 +82,8 @@ export default function DrawerMenu({user}) {
                 </Box>
 
                 {user && (<Box>
-                  <Link as={NextLink} href="/account">
-                    <Button boxSize={"full"} height={10}>
+                  <Link as={NextLink} href={`/user/?user=`+username} passHref>
+                    <Button boxSize={"full"} height={10} >
                       Account
                     </Button>
                   </Link>
