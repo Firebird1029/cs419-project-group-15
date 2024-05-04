@@ -121,7 +121,7 @@ export default function Nav({user}) {
                       src={avatarUrl}
                     />
                   </MenuButton>
-                  <MenuList alignItems={'center'}>
+                  <MenuList alignItems={'center'} zIndex={"999"}>
                     <br />
                     <Center>
                       <Avatar

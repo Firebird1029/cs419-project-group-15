@@ -82,7 +82,7 @@ export default function DrawerMenu({user}) {
                 </Box>
 
                 {user && (<Box>
-                  <Link as={NextLink} href={`/user/?user=`+username} passHref>
+                  <Link as={NextLink} href={`user/?username=`+username} passHref>
                     <Button boxSize={"full"} height={10} >
                       Account
                     </Button>
