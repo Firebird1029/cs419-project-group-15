@@ -68,7 +68,6 @@ export default function AccountForm() {
       }
     } catch (error) {
       alert("Error loading user data!");
-      console.log("GOT HERE 1");
       console.log(error);
     }
 
@@ -78,7 +77,6 @@ export default function AccountForm() {
         .from("games")
         .select("*, profiles!inner(username)")
         .eq("owner", userid);
-        // .maybeSingle();
 
 
       if (error && status !== 406) {
@@ -86,8 +84,6 @@ export default function AccountForm() {
       }
 
       if (data) {
-        console.log("GOT HERE 2");
-        console.log("CREATED GAMES: ", data)
         setCreatedGames(data);
       }
     } catch (error) {
@@ -101,15 +97,12 @@ export default function AccountForm() {
         .from("ratings")
         .select(`game_id, rating, comment, created_at`)
         .eq("user_id", userid);
-        // .maybeSingle();
 
       if (error && status !== 406) {
         throw error;
       }
 
       if (data) {
-        
-      console.log("GOT HERE 3");
         setReviews(data);
       }
     } catch (error) {
