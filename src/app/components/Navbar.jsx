@@ -89,7 +89,7 @@ export default function Nav({ user }) {
   }, [user, getProfile]);
 
   return (
-    <Box bg={"#121212ff"} px={4}>
+    <Box bg={useColorModeValue("gray.100", "gray.900")} px={4}>
       <Flex h={16} alignItems={"center"} justifyContent={"space-between"}>
         <Drawer user={user} />
         <Box>

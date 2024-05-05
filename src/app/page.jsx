@@ -35,7 +35,7 @@ export default function Home() {
   }, [allGames]);
 
   return (
-    <Box bg={"#262b38ff"} padding="50px">
+    <Box padding="50px">
       <Container maxW="container.xl">
         <Heading color="#8fffb2">Welcome to Mind Matrix!</Heading>
         <br />
