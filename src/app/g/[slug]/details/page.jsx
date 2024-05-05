@@ -34,7 +34,7 @@ function Scoreboard({ scores }) {
           <tr>
             <th>Rank</th>
             <th>Name</th>
-            <th>Score</th>
+            <th>Elapsed time</th>
           </tr>
         </thead>
         <tbody>
@@ -44,7 +44,7 @@ function Scoreboard({ scores }) {
               <tr key={score.id}>
                 <td>{index + 1}</td>
                 <td>{score.profiles.username}</td>
-                <td>{score.details ? score.details.score : ""}</td>
+                <td>{score.details ? score.details : ""}</td>
               </tr>
             ))}
         </tbody>
@@ -149,6 +149,7 @@ export default function GameDetailsPage({ params: { slug } }) {
   const [comment, setComment] = useState("");
   const [ratingCreated, setRatingCreated] = useState(false);
 
+  // console.log("GJKLJAKDLSJGK")
   const callCreateRating = useCallback(() => {
     createRating(slug, game.id, rating, comment).then((res) => {
       if (res.success) {

@@ -143,16 +143,16 @@ export default function AccountForm({ user }) {
       });
       
       if (selectedFile) {
-        var exists = await checkFileExists('pfps', user.id + "/uploaded-pfp");
+        // var exists = await checkFileExists('pfps', user.id + "/uploaded-pfp");
         // if (!exists) {
-          console.log("GOT HERE!!!")
+          // console.log("GOT HERE!!!")
           const { data, error } = await supabase
             .storage
             .from('pfps')
             .upload(user.id + "/uploaded-pfp", selectedFile)
 
           if (error) {
-            console.log("GOT HERE3242!!!")
+            // console.log("GOT HERE3242!!!")
             const { data, error } = await supabase
               .storage
               .from('pfps')
@@ -171,10 +171,10 @@ export default function AccountForm({ user }) {
         //       upsert: true
         //     })
         // }
-        var data = await getMedia();
-        if (data) {
+        var media = await getMedia();
+        if (media) {
           //https://stackoverflow.com/questions/77523252/the-image-is-not-re-loaded-from-supabase <Thank god for this
-          var url = data.publicUrl + `?q=${Date.now()}`
+          var url = media.publicUrl + `?q=${Date.now()}`
           setAvatarUrl(url);
           const { error } = await supabase.from("profiles").upsert({
             id: user.id,

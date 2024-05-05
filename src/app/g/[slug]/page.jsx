@@ -22,7 +22,7 @@ function Riddle({ question, answer, saveToScoreboard }) {
   const [guess, setGuess] = useState("");
   const [result, setResult] = useState("");
   const [timer, setTimer] = useState(60); // Timer starts at 60 seconds
-  const [stopTimer, setStop] = useState(null);
+  const [stopTimer, setStop] = useState(false);
 
   // check if user's guess matches the answer when "Guess" button is clicked
   function checkAnswer() {
@@ -139,13 +139,14 @@ export default function GamePage({ params: { slug } }) {
 
   // function that calls API service to update scoreboard
   const saveToScoreboard = useCallback(
-    async (details, timer) => {
+    async (timer) => {
+      console.log(timer)
       // only update scoreboard if logged in
       if (!(await supabase.auth.getUser()).data.user) {
         return;
       }
 
-      const res = await updateScoreboard(slug, game.id, timer);
+      const res = await updateScoreboard(slug, game.id, (60-timer));
       if (!res.success) {
         console.error(res.message); // TODO show in GUI
       }

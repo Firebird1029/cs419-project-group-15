@@ -82,14 +82,14 @@ async function getScoreboard(gameUrlTag) {
   }
 }
 
-async function updateScoreboard(gameUrlTag, gameId, submissionDetails) {
+async function updateScoreboard(gameUrlTag, gameId, timer) {
   try {
     // game details + Supabase auth info
     const data = {
       session: await supabase.auth.getSession(),
       user_id: (await supabase.auth.getUser()).data.user.id,
       game_id: gameId,
-      time: submissionDetails,
+      details: timer,
     };
 
     // send POST request
