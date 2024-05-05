@@ -149,7 +149,6 @@ export default function GameDetailsPage({ params: { slug } }) {
   const [comment, setComment] = useState("");
   const [ratingCreated, setRatingCreated] = useState(false);
 
-  // console.log("GJKLJAKDLSJGK")
   const callCreateRating = useCallback(() => {
     createRating(slug, game.id, rating, comment).then((res) => {
       if (res.success) {
@@ -254,7 +253,7 @@ export default function GameDetailsPage({ params: { slug } }) {
       return;
     }
     ratings.forEach((_rating) => {
-      console.log(_rating);
+      // console.log(_rating);
       if (_rating.profiles.id === user.id) {
         setRatingCreated(true);
       }

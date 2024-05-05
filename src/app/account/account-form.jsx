@@ -6,27 +6,30 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { Input, 
-          Box, 
-          Avatar, 
-          Flex, 
-          Center, 
-          Text, 
-          Square, 
-          Card, 
-          CardHeader, 
-          CardBody, 
-          CardFooter, 
-          Stack, 
-          Heading, 
-          Divider, 
-          ButtonGroup, 
-          Button, 
-          Image,
-          Wrap,
-          WrapItem, IconButton, Alert, AlertIcon, Spinner, AlertTitle, AlertDescription, CloseButton } from "@chakra-ui/react";
+import {
+  Input,
+  Box,
+  Avatar,
+  Flex,
+  Card,
+  CardBody,
+  CardFooter,
+  Stack,
+  Heading,
+  Divider,
+  ButtonGroup,
+  Button,
+  Wrap,
+  WrapItem,
+  Alert,
+  AlertIcon,
+  Spinner,
+  AlertTitle,
+  AlertDescription,
+  CloseButton,
+} from "@chakra-ui/react";
+import React, { useRef } from "react";
 import createClient from "@/utils/supabase/client";
-import React, { useRef } from 'react';
 
 export default function AccountForm({ user }) {
   const supabase = createClient();
@@ -54,7 +57,7 @@ export default function AccountForm({ user }) {
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     // setAvatarUrl(file);
-    setAvatarChange(true)
+    setAvatarChange(true);
     setSelectedFile(file);
     // You can do further processing with the selected file here
   };
@@ -72,34 +75,36 @@ export default function AccountForm({ user }) {
   };
 
   const getProfile = useCallback(async () => {
-    try {
-      setLoading(true);
-
-      const { data, error, status } = await supabase
-        .from("profiles")
-        .select(`full_name, username, website, avatar`)
-        .eq("id", user.id)
-        .single();
-
-      if (error && status !== 406) {
-        throw error;
+    if (user) {
+      try {
+        setLoading(true);
+  
+        const { data, error, status } = await supabase
+          .from("profiles")
+          .select(`full_name, username, website, avatar`)
+          .eq("id", user.id)
+          .single();
+  
+        if (error && status !== 406) {
+          throw error;
+        }
+  
+        if (data) {
+          setFullname(data.full_name);
+          setUsername(data.username);
+          setWebsite(data.website);
+          setAvatarUrl(data.avatar);
+  
+          setOGName(data.full_name);
+          setOGUserName(data.username);
+          setOGAvatar(data.avatar);
+        }
+      } catch (error) {
+        // alert("Error loading user data!");
+        console.log(error);
+      } finally {
+        setLoading(false);
       }
-
-      if (data) {
-        setFullname(data.full_name);
-        setUsername(data.username);
-        setWebsite(data.website);
-        setAvatarUrl(data.avatar);
-
-        setOGName(data.full_name);
-        setOGUserName(data.username);
-        setOGAvatar(data.avatar);
-      }
-    } catch (error) {
-      alert("Error loading user data!");
-      console.log(error);
-    } finally {
-      setLoading(false);
     }
   }, [user, supabase]);
 
@@ -108,29 +113,28 @@ export default function AccountForm({ user }) {
   }, [user, getProfile]);
 
   async function getMedia() {
-    const { data } = supabase
-      .storage
-      .from('pfps')
-      .getPublicUrl(user.id + "/uploaded-pfp")
+    const { data } = supabase.storage
+      .from("pfps")
+      .getPublicUrl(user.id + "/uploaded-pfp");
 
     return data;
   }
-  
+
   const checkFileExists = async (bucketName, filePath) => {
-    console.log("LOOKING FOR THIS FILE: ", filePath)
+    console.log("LOOKING FOR THIS FILE: ", filePath);
     const { data, error } = await supabase.storage
       .from(bucketName)
       .getPublicUrl(filePath);
 
     if (error) {
-        console.error('Error checking file existence:', error.message);
-        return false;
+      console.error("Error checking file existence:", error.message);
+      return false;
     }
 
     return data !== null;
-};
+  };
 
-  async function updateProfile({website_}) {
+  async function updateProfile({ website_ }) {
     try {
       setLoading(true);
       const { error } = await supabase.from("profiles").upsert({
@@ -141,40 +145,24 @@ export default function AccountForm({ user }) {
         avatar: avatarUrl,
         updated_at: new Date().toISOString(),
       });
-      
-      if (selectedFile) {
-        // var exists = await checkFileExists('pfps', user.id + "/uploaded-pfp");
-        // if (!exists) {
-          // console.log("GOT HERE!!!")
-          const { data, error } = await supabase
-            .storage
-            .from('pfps')
-            .upload(user.id + "/uploaded-pfp", selectedFile)
 
-          if (error) {
-            // console.log("GOT HERE3242!!!")
-            const { data, error } = await supabase
-              .storage
-              .from('pfps')
-              .update(user.id + "/uploaded-pfp", selectedFile, {
-                upsert: true
-              })
-          }
-        // }
-        // } else {
-          
-        //   console.log("GOT HERE3242!!!")
-        //   const { data, error } = await supabase
-        //     .storage
-        //     .from('pfps')
-        //     .update(user.id + "/uploaded-pfp", selectedFile, {
-        //       upsert: true
-        //     })
-        // }
+      if (selectedFile) {
+        const { data, error } = await supabase.storage
+          .from("pfps")
+          .upload(user.id + "/uploaded-pfp", selectedFile);
+
+        if (error) {
+          const { data, error } = await supabase.storage
+            .from("pfps")
+            .update(user.id + "/uploaded-pfp", selectedFile, {
+              upsert: true,
+            });
+        }
+
         var media = await getMedia();
         if (media) {
           //https://stackoverflow.com/questions/77523252/the-image-is-not-re-loaded-from-supabase <Thank god for this
-          var url = media.publicUrl + `?q=${Date.now()}`
+          var url = media.publicUrl + `?q=${Date.now()}`;
           setAvatarUrl(url);
           const { error } = await supabase.from("profiles").upsert({
             id: user.id,
@@ -190,16 +178,18 @@ export default function AccountForm({ user }) {
       setStatus(true);
     } catch (error) {
       if (error.code == 23505) {
-        setError("The username \"" + username + "\" is already taken. Please try a different username.")
+        setError(
+          'The username "' +
+            username +
+            '" is already taken. Please try a different username.',
+        );
       } else {
-        setError("Errored with code " + error.code + "... Please try again.")
+        setError("Errored with code " + error.code + "... Please try again.");
       }
     } finally {
       setLoading(false);
     }
   }
-
-  
 
   function closeSuccess() {
     location.reload();
@@ -210,7 +200,7 @@ export default function AccountForm({ user }) {
   }
 
   function avatarClicked(url) {
-    setAvatarUrl(url); 
+    setAvatarUrl(url);
     if (originalAvatar == url) {
       setAvatarChange(false);
     } else {
@@ -220,30 +210,30 @@ export default function AccountForm({ user }) {
 
   return (
     <Box>
-          <Flex color='white'>
-        <Box margin='9'>
-          <Card maxW='sm' margin=''>
-              <CardBody>
-                <Box align='center'>
-                  <Avatar
-                    src={avatarUrl}
-                    height="330px"
-                    width="330px"
-                    borderRadius='50%'
-                    alt='Users profile pic'
-                    object-fit= "cover"
-                  />
-                </Box>
-                
-                <Stack mt='6' spacing='3'>
-                  <Heading align='center' size='md'>{fullname} @ {username}</Heading>
-                </Stack>
-              </CardBody>
-                  
-            
+      <Flex color="white">
+        <Box margin="9">
+          <Card maxW="sm" margin="">
+            <CardBody>
+              <Box align="center">
+                <Avatar
+                  src={avatarUrl}
+                  height="330px"
+                  width="330px"
+                  borderRadius="50%"
+                  alt="Users profile pic"
+                  object-fit="cover"
+                />
+              </Box>
+
+              <Stack mt="6" spacing="3">
+                <Heading align="center" size="md">
+                  {fullname} @ {username}
+                </Heading>
+              </Stack>
+            </CardBody>
           </Card>
         </Box>
-        <Box flex='1' margin='9'>
+        <Box flex="1" margin="9">
           <Card>
             <CardBody>
               <label htmlFor="email">Email</label>
@@ -254,7 +244,7 @@ export default function AccountForm({ user }) {
                 type="text"
                 value={fullname || ""}
                 onChange={function nameChanged(e) {
-                  setFullname(e.target.value); 
+                  setFullname(e.target.value);
                   if (originalName == e.target.value) {
                     setNameChange(false);
                   } else {
@@ -269,7 +259,7 @@ export default function AccountForm({ user }) {
                 type="text"
                 value={username || ""}
                 onChange={function usernameChanged(e) {
-                  setUsername(e.target.value); 
+                  setUsername(e.target.value);
                   if (originalUserName == e.target.value) {
                     setUserChange(false);
                   } else {
@@ -278,80 +268,113 @@ export default function AccountForm({ user }) {
                 }}
                 disabled={loading}
               />
-              <Box margin='5'>
+              <Box margin="5">
                 <Divider />
               </Box>
-              <Box margin='2'>
+              <Box margin="2">
                 <Wrap>
                   <WrapItem>
-                    <Avatar src='profile_0.png'
-                      onClick={function avatarClick() {avatarClicked('profile_0.png')}
-                    }/>
-                  </WrapItem>
-                  
-                  <WrapItem>
-                    <Avatar src='profile_0.1.png'
-                      onClick={function avatarClick() {avatarClicked('profile_0.1.png')}
-                    }/>
-                  </WrapItem>
-                  
-                  <WrapItem>
-                    <Avatar src='profile_0.2.png'
-                      onClick={function avatarClick() {avatarClicked('profile_0.2.png')}
-                    }/>
-                  </WrapItem>
-                  
-                  <WrapItem>
-                    <Avatar src='profile_0.3.png'
-                      onClick={function avatarClick() {avatarClicked('profile_0.3.png')}
-                    }/>
-                  </WrapItem>
-                  
-                  <WrapItem>
-                    <Avatar src='profile_0.4.png'
-                      onClick={function avatarClick() {avatarClicked('profile_0.4.png')}
-                    }/>
-                  </WrapItem>
-                  
-                  <WrapItem>
-                    <Avatar src='profile_0.5.png'
-                      onClick={function avatarClick() {avatarClicked('profile_0.5.png')}
-                    }/>
-                  </WrapItem>
-                  
-                  <WrapItem>
-                    <Avatar src='profile_0.6.png'
-                      onClick={function avatarClick() {avatarClicked('profile_0.6.png')}
-                    }/>
+                    <Avatar
+                      src="profile_0.png"
+                      onClick={function avatarClick() {
+                        avatarClicked("profile_0.png");
+                      }}
+                    />
                   </WrapItem>
 
                   <WrapItem>
-                    <Avatar src='profile_1.png'
-                      onClick={function avatarClick() {avatarClicked('profile_1.png')}
-                    }/>
+                    <Avatar
+                      src="profile_0.1.png"
+                      onClick={function avatarClick() {
+                        avatarClicked("profile_0.1.png");
+                      }}
+                    />
                   </WrapItem>
 
                   <WrapItem>
-                    <Avatar src='profile_2.png'
-                      onClick={function avatarClick() {avatarClicked('profile_2.png')}
-                    }/>
+                    <Avatar
+                      src="profile_0.2.png"
+                      onClick={function avatarClick() {
+                        avatarClicked("profile_0.2.png");
+                      }}
+                    />
                   </WrapItem>
 
                   <WrapItem>
-                    <Avatar src='profile_3.png'
-                      onClick={function avatarClick() {avatarClicked('profile_3.png')}
-                    }/>
+                    <Avatar
+                      src="profile_0.3.png"
+                      onClick={function avatarClick() {
+                        avatarClicked("profile_0.3.png");
+                      }}
+                    />
                   </WrapItem>
-                  
+
                   <WrapItem>
-                    <Avatar src='profile_4.png'
-                      onClick={function avatarClick() {avatarClicked('profile_4.png')}
-                    }/>
+                    <Avatar
+                      src="profile_0.4.png"
+                      onClick={function avatarClick() {
+                        avatarClicked("profile_0.4.png");
+                      }}
+                    />
+                  </WrapItem>
+
+                  <WrapItem>
+                    <Avatar
+                      src="profile_0.5.png"
+                      onClick={function avatarClick() {
+                        avatarClicked("profile_0.5.png");
+                      }}
+                    />
+                  </WrapItem>
+
+                  <WrapItem>
+                    <Avatar
+                      src="profile_0.6.png"
+                      onClick={function avatarClick() {
+                        avatarClicked("profile_0.6.png");
+                      }}
+                    />
+                  </WrapItem>
+
+                  <WrapItem>
+                    <Avatar
+                      src="profile_1.png"
+                      onClick={function avatarClick() {
+                        avatarClicked("profile_1.png");
+                      }}
+                    />
+                  </WrapItem>
+
+                  <WrapItem>
+                    <Avatar
+                      src="profile_2.png"
+                      onClick={function avatarClick() {
+                        avatarClicked("profile_2.png");
+                      }}
+                    />
+                  </WrapItem>
+
+                  <WrapItem>
+                    <Avatar
+                      src="profile_3.png"
+                      onClick={function avatarClick() {
+                        avatarClicked("profile_3.png");
+                      }}
+                    />
+                  </WrapItem>
+
+                  <WrapItem>
+                    <Avatar
+                      src="profile_4.png"
+                      onClick={function avatarClick() {
+                        avatarClicked("profile_4.png");
+                      }}
+                    />
                   </WrapItem>
                   <WrapItem>
                     <Button
-                      borderRadius='full'
-                      boxSize='55px'
+                      borderRadius="full"
+                      boxSize="55px"
                       onClick={handleButtonClick} // Trigger file input click on button click
                     >
                       <Input
@@ -367,9 +390,8 @@ export default function AccountForm({ user }) {
                         aria-hidden="true"
                         accept="image/*" // Adjust accept attribute to only accept image files
                       />
-                      <Avatar src='upload-file.png' />
+                      <Avatar src="upload-file.png" />
                     </Button>
-                    
                   </WrapItem>
                 </Wrap>
               </Box>
@@ -377,78 +399,106 @@ export default function AccountForm({ user }) {
 
             <Divider />
             <CardFooter>
-              <ButtonGroup spacing='2'>
-              <Button 
-                // variant='solid' 
-                colorScheme='blue'
-                type="button"
-                className="button primary block"
-                disabled={loading || (!usernameChanged && !nameChanged && !avatarChanged)}
-                variant={loading || (!usernameChanged && !nameChanged && !avatarChanged) ? "disabled" : "solid"}
-                pointerEvents={loading || (!usernameChanged && !nameChanged && !avatarChanged) ? "none" : "auto"} // Disable pointer events when button is disabled
-                onClick={() =>
-                  updateProfile({
-                    website,
-                  })
-                }
-              >
-                {loading ? "Loading ..." : (!usernameChanged && !nameChanged && !avatarChanged) ? "No Changes" : "Save Changes"}
-              </Button>
+              <ButtonGroup spacing="2">
+                <Button
+                  // variant='solid'
+                  colorScheme="blue"
+                  type="button"
+                  className="button primary block"
+                  disabled={
+                    loading ||
+                    (!usernameChanged && !nameChanged && !avatarChanged)
+                  }
+                  variant={
+                    loading ||
+                    (!usernameChanged && !nameChanged && !avatarChanged)
+                      ? "disabled"
+                      : "solid"
+                  }
+                  pointerEvents={
+                    loading ||
+                    (!usernameChanged && !nameChanged && !avatarChanged)
+                      ? "none"
+                      : "auto"
+                  } // Disable pointer events when button is disabled
+                  onClick={() =>
+                    updateProfile({
+                      website,
+                    })
+                  }
+                >
+                  {loading
+                    ? "Loading ..."
+                    : !usernameChanged && !nameChanged && !avatarChanged
+                      ? "No Changes"
+                      : "Save Changes"}
+                </Button>
 
                 <form action="/auth/signout" method="post">
-                  <Button variant='ghost' colorScheme='blue' className="button block" type="submit">
+                  <Button
+                    variant="ghost"
+                    colorScheme="blue"
+                    className="button block"
+                    type="submit"
+                  >
                     Log Out
                   </Button>
                 </form>
-                
               </ButtonGroup>
             </CardFooter>
-
           </Card>
         </Box>
-        
       </Flex>
       <Box>
         {loading && (
-          <Alert status='info' height='40' alignItems='center'
-          justifyContent='center'>
+          <Alert
+            status="info"
+            height="40"
+            alignItems="center"
+            justifyContent="center"
+          >
             <AlertIcon />
             <Spinner
-              thickness='4px'
-              speed='0.65s'
-              emptyColor='gray.200'
-              color='blue.500'
-              margin='10'/>
-               Website is loading
-          </Alert>)
-        }
+              thickness="4px"
+              speed="0.65s"
+              emptyColor="gray.200"
+              color="blue.500"
+              margin="10"
+            />
+            Website is loading
+          </Alert>
+        )}
         {status && (
-            <Alert status='success'
-            alignItems='center'
-            justifyContent='center'
-            height='40'>
+          <Alert
+            status="success"
+            alignItems="center"
+            justifyContent="center"
+            height="40"
+          >
             <AlertIcon />
             <Box>
               <AlertTitle>Success!</AlertTitle>
               <AlertDescription>
-                Your account settings have been updated. Please close this alert to reload and apply your changes.
+                Your account settings have been updated. Please close this alert
+                to reload and apply your changes.
               </AlertDescription>
             </Box>
             <CloseButton
-              alignSelf='flex-start'
-              position='relative'
+              alignSelf="flex-start"
+              position="relative"
               right={-1}
               top={-1}
               onClick={closeSuccess}
             />
           </Alert>
-          )
-        }
+        )}
         {error && (
-            <Alert status='error'
-            alignItems='center'
-            justifyContent='center'
-            height='40'>
+          <Alert
+            status="error"
+            alignItems="center"
+            justifyContent="center"
+            height="40"
+          >
             <AlertIcon />
             <Box>
               <AlertTitle>Error!</AlertTitle>
@@ -457,19 +507,17 @@ export default function AccountForm({ user }) {
               </AlertDescription>
             </Box>
             <CloseButton
-              alignSelf='flex-start'
-              position='relative'
+              alignSelf="flex-start"
+              position="relative"
               right={-1}
               top={-1}
               onClick={closeError}
             />
           </Alert>
-          )
-        }
+        )}
       </Box>
     </Box>
-    
-  
+
     //   <div>
     //     <label htmlFor="website">Website</label>
     //     <Input
@@ -480,6 +528,5 @@ export default function AccountForm({ user }) {
     //       disabled={loading}
     //     />
     //   </div>
-
   );
 }

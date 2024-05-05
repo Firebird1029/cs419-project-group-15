@@ -67,7 +67,7 @@ export default function AccountForm() {
         setAvatarUrl(data.avatar);
       }
     } catch (error) {
-      alert("Error loading user data!");
+      // alert("Error loading user data!");
       console.log(error);
     }
 
@@ -87,7 +87,7 @@ export default function AccountForm() {
         setCreatedGames(data);
       }
     } catch (error) {
-      alert("Error loading user data!");
+      // alert("Error loading user data!");
       console.log(error);
     }
 
@@ -106,7 +106,7 @@ export default function AccountForm() {
         setReviews(data);
       }
     } catch (error) {
-      alert("Error loading user data!");
+      // alert("Error loading user data!");
       console.log(error);
     }
   }
@@ -129,7 +129,7 @@ export default function AccountForm() {
       } catch (error) {
         
       console.log("GOT HERE 4");
-        alert("Error loading user data!");
+        // alert("Error loading user data!");
         console.log(error);
       }
       

@@ -59,26 +59,28 @@ export default function Nav({ user }) {
   const [avatarUrl, setAvatarUrl] = useState(null);
 
   const getProfile = useCallback(async () => {
-    try {
-      const { data, error, status } = await supabase
-        .from("profiles")
-        .select(`full_name, username, website, avatar`)
-        .eq("id", user.id)
-        .single();
-
-      if (error && status !== 406) {
-        throw error;
+    if (user) {
+      try {
+        const { data, error, status } = await supabase
+          .from("profiles")
+          .select(`full_name, username, website, avatar`)
+          .eq("id", user.id)
+          .single();
+  
+        if (error && status !== 406) {
+          throw error;
+        }
+  
+        if (data) {
+          setFullname(data.full_name);
+          setUsername(data.username);
+          setWebsite(data.website);
+          setAvatarUrl(data.avatar);
+        }
+      } catch (error) {
+        // alert("Error loading user data! :(");
+        console.log(error);
       }
-
-      if (data) {
-        setFullname(data.full_name);
-        setUsername(data.username);
-        setWebsite(data.website);
-        setAvatarUrl(data.avatar);
-      }
-    } catch (error) {
-      // alert("Error loading user data! :(");
-      console.log(error);
     }
   }, [user, supabase]);
 
