@@ -27,6 +27,7 @@ import { Input,
           WrapItem, IconButton, Alert, AlertIcon, Spinner, AlertTitle, AlertDescription, CloseButton } from "@chakra-ui/react";
 import createClient from "@/utils/supabase/client";
 import React, { useRef } from 'react';
+import Carousel from "../carousel/index"
 
 // import {useParams} from 'react-router-dom';
 
@@ -67,6 +68,7 @@ export default function AccountForm() {
       }
     } catch (error) {
       alert("Error loading user data!");
+      console.log("GOT HERE 1");
       console.log(error);
     }
 
@@ -75,14 +77,17 @@ export default function AccountForm() {
       const { data, error, status } = await supabase
         .from("games")
         .select(`name, type, url_tag, description, created_at`)
-        .eq("owner", userid)
-        .maybeSingle();
+        .eq("owner", userid);
+        // .maybeSingle();
+
 
       if (error && status !== 406) {
         throw error;
       }
 
       if (data) {
+        console.log("GOT HERE 2");
+        console.log("CREATED GAMES: ", data)
         setCreatedGames(data);
       }
     } catch (error) {
@@ -95,14 +100,16 @@ export default function AccountForm() {
       const { data, error, status } = await supabase
         .from("ratings")
         .select(`game_id, rating, comment, created_at`)
-        .eq("user_id", userid)
-        .maybeSingle();
+        .eq("user_id", userid);
+        // .maybeSingle();
 
       if (error && status !== 406) {
         throw error;
       }
 
       if (data) {
+        
+      console.log("GOT HERE 3");
         setReviews(data);
       }
     } catch (error) {
@@ -127,6 +134,8 @@ export default function AccountForm() {
         }
         
       } catch (error) {
+        
+      console.log("GOT HERE 4");
         alert("Error loading user data!");
         console.log(error);
       }
@@ -169,7 +178,7 @@ export default function AccountForm() {
             <CardBody>
               <Box>
                 <Heading>Created Games</Heading> 
-                
+                  <Carousel data={createdGames}/>
               </Box>
             </CardBody>
 
