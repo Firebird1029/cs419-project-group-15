@@ -117,15 +117,17 @@ export default function AccountForm({ user }) {
   }
   
   const checkFileExists = async (bucketName, filePath) => {
+    console.log("LOOKING FOR THIS FILE: ", filePath)
     const { data, error } = await supabase.storage
       .from(bucketName)
-      .list(filePath)
+      .getPublicUrl(filePath);
 
     if (error) {
-      console.error(error)
-      return false
-  }
-  return true;
+        console.error('Error checking file existence:', error.message);
+        return false;
+    }
+
+    return data !== null;
 };
 
   async function updateProfile({website_}) {
@@ -142,20 +144,33 @@ export default function AccountForm({ user }) {
       
       if (selectedFile) {
         var exists = await checkFileExists('pfps', user.id + "/uploaded-pfp");
-        if (!exists) {
+        // if (!exists) {
+          console.log("GOT HERE!!!")
           const { data, error } = await supabase
             .storage
             .from('pfps')
             .upload(user.id + "/uploaded-pfp", selectedFile)
-        } else {
+
+          if (error) {
+            console.log("GOT HERE3242!!!")
+            const { data, error } = await supabase
+              .storage
+              .from('pfps')
+              .update(user.id + "/uploaded-pfp", selectedFile, {
+                upsert: true
+              })
+          }
+        // }
+        // } else {
           
-          const { data, error } = await supabase
-            .storage
-            .from('pfps')
-            .update(user.id + "/uploaded-pfp", selectedFile, {
-              upsert: true
-            })
-        }
+        //   console.log("GOT HERE3242!!!")
+        //   const { data, error } = await supabase
+        //     .storage
+        //     .from('pfps')
+        //     .update(user.id + "/uploaded-pfp", selectedFile, {
+        //       upsert: true
+        //     })
+        // }
         var data = await getMedia();
         if (data) {
           //https://stackoverflow.com/questions/77523252/the-image-is-not-re-loaded-from-supabase <Thank god for this

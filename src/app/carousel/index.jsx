@@ -25,32 +25,6 @@ import {
 import ChakraCarousel from "./ChakraCarousel";
 
 export default function App({data}) {
-  // const supabase = createClient();
-  // const [avatar, setAvatar] = useState();
-
-  // const allGames = useCallback(async () => {
-  //   try {
-  //     const { data: allGameData, error, status} = await supabase.from("games").select("*, profiles!inner(username)");
-
-  //     if (error && status !== 406) {
-  //       throw error;
-  //     }
-
-  //     if (data) {
-  //       setData(allGameData);
-  //     }
-  //   } catch (error) {
-  //     alert("Error loading games!");
-  //     console.log(error);
-  //   }
-  // }, [supabase]);
-
-  // useEffect(() => {
-  //   allGames();
-  // }, [allGames]);
-
-
-
   return (
     
     <ChakraProvider theme={extendTheme(theme)}>

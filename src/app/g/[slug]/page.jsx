@@ -22,29 +22,32 @@ function Riddle({ question, answer, saveToScoreboard }) {
   const [guess, setGuess] = useState("");
   const [result, setResult] = useState("");
   const [timer, setTimer] = useState(60); // Timer starts at 60 seconds
+  const [stopTimer, setStop] = useState(null);
 
   // check if user's guess matches the answer when "Guess" button is clicked
   function checkAnswer() {
     if (guess.toLowerCase() === answer.toLowerCase()) {
       setResult("Correct!"); // TODO future add fun animations
-
-      saveToScoreboard({});
+      setStop(true);
+      saveToScoreboard(timer);
     } else {
       setResult("Incorrect!");
     }
   }
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setTimer((prevTimer) => prevTimer - 1);
-    }, 1000);
-    return () => clearInterval(interval);
-  }, []);
+    if (!stopTimer) {
+      const interval = setInterval(() => {
+        setTimer((prevTimer) => prevTimer - 1);
+      }, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [stopTimer]);
 
   function formatTime(time) {
-    const minutes = Math.floor(time / 60);
-    const seconds = time % 60;
-    return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+      const minutes = Math.floor(time / 60);
+      const seconds = time % 60;
+      return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
   }
 
   useEffect(() => {
@@ -136,13 +139,13 @@ export default function GamePage({ params: { slug } }) {
 
   // function that calls API service to update scoreboard
   const saveToScoreboard = useCallback(
-    async (details) => {
+    async (details, timer) => {
       // only update scoreboard if logged in
       if (!(await supabase.auth.getUser()).data.user) {
         return;
       }
 
-      const res = await updateScoreboard(slug, game.id, details);
+      const res = await updateScoreboard(slug, game.id, timer);
       if (!res.success) {
         console.error(res.message); // TODO show in GUI
       }

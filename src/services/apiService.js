@@ -89,7 +89,7 @@ async function updateScoreboard(gameUrlTag, gameId, submissionDetails) {
       session: await supabase.auth.getSession(),
       user_id: (await supabase.auth.getUser()).data.user.id,
       game_id: gameId,
-      details: submissionDetails,
+      time: submissionDetails,
     };
 
     // send POST request

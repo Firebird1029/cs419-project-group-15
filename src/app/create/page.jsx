@@ -81,6 +81,7 @@ export default function CreateNewGamePage() {
   const [loading, setLoading] = useState(true);
   const [gameName, setGameName] = useState("");
   const [gameType, setGameType] = useState("");
+  const [gameDescription, setGameDescription] = useState("");
   const [gameDetails, setGameDetails] = useState({});
   const [gameDetailsReady, setGameDetailsReady] = useState(false);
 
@@ -108,6 +109,13 @@ export default function CreateNewGamePage() {
             placeholder=""
             value={gameName}
             onChange={(e) => setGameName(e.target.value)}
+          />
+
+          <p>Game Description:</p>
+          <Input
+            placeholder=""
+            value={gameDescription}
+            onChange={(e) => setGameDescription(e.target.value)}
           />
 
           <p>Game Type:</p>
@@ -140,6 +148,7 @@ export default function CreateNewGamePage() {
               const res = await createGame({
                 name: gameName,
                 type: gameType,
+                description: gameDescription,
                 details: JSON.stringify(gameDetails),
               });
 

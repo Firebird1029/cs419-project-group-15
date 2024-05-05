@@ -62,7 +62,6 @@ export default async function GalleryPage() {
                           <Avatar src={avatar}/>
                           <Text>{username}</Text>
                         </HStack>
-                        
                       </Link>
                     </Td>
                   <Td>
@@ -74,14 +73,14 @@ export default async function GalleryPage() {
               ),
             )}
           </Tbody>
-          <Tfoot>
+          {/* <Tfoot>
             <Tr>
               <Th>Game</Th>
               <Th>Type</Th>
               <Th>Created By</Th>
               <Th />
             </Tr>
-          </Tfoot>
+          </Tfoot> */}
         </Table>
       </TableContainer>
     </Container>

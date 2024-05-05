@@ -132,7 +132,7 @@ export default function Nav({ user }) {
                   </Center>
                   <br />
                   <MenuDivider />
-                  <MenuItem as={NextLink} href={"/gallery"}>
+                  <MenuItem as={NextLink} href={`user/?username=`+username} passHref>
                     Your Games
                   </MenuItem>
                   <MenuItem as={NextLink} href={"/account"}>
