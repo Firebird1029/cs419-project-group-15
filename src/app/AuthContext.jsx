@@ -3,19 +3,19 @@
 
 // import createClient from "@/utils/supabase/server";
 
-
 // const AuthContext = createContext();
 
 export default async function checkUser() {
-  
   const supabase = createClient();
   const {
     data: { user },
     error,
   } = await supabase.auth.getUser();
-  const { data: allGames } = await supabase.from("games").select("*, profiles!inner(username)");
-  return (user);
-};
+  const { data: allGames } = await supabase
+    .from("games")
+    .select("*, profiles!inner(username)");
+  return user;
+}
 
 // export const AuthProvider = ({ children }) => {
 //   const [user, setUser] = useState(null); // User state, null if not logged in

@@ -45,9 +45,9 @@ function Riddle({ question, answer, saveToScoreboard }) {
   }, [stopTimer]);
 
   function formatTime(time) {
-      const minutes = Math.floor(time / 60);
-      const seconds = time % 60;
-      return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+    const minutes = Math.floor(time / 60);
+    const seconds = time % 60;
+    return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
   }
 
   useEffect(() => {
@@ -140,13 +140,13 @@ export default function GamePage({ params: { slug } }) {
   // function that calls API service to update scoreboard
   const saveToScoreboard = useCallback(
     async (timer) => {
-      console.log(timer)
+      console.log(timer);
       // only update scoreboard if logged in
       if (!(await supabase.auth.getUser()).data.user) {
         return;
       }
 
-      const res = await updateScoreboard(slug, game.id, (60-timer));
+      const res = await updateScoreboard(slug, game.id, 60 - timer);
       if (!res.success) {
         console.error(res.message); // TODO show in GUI
       }

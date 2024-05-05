@@ -1,4 +1,3 @@
-
 import { redirect } from "next/navigation";
 // import createClient from "@/utils/supabase/server";
 import UserPage from "./user-page";

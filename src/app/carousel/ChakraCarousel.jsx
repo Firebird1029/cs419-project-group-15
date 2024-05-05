@@ -1,4 +1,4 @@
-//TODO: Properly handle user tabbing
+// TODO: Properly handle user tabbing
 
 import React, {
   useLayoutEffect,
@@ -6,7 +6,7 @@ import React, {
   useEffect,
   useState,
   useMemo,
-  useRef
+  useRef,
 } from "react";
 
 import {
@@ -16,7 +16,7 @@ import {
   VStack,
   Button,
   Flex,
-  Box
+  Box,
 } from "@chakra-ui/react";
 
 import { ChevronRightIcon, ChevronLeftIcon } from "@chakra-ui/icons";
@@ -30,10 +30,10 @@ const transitionProps = {
   stiffness: 400,
   type: "spring",
   damping: 60,
-  mass: 3
+  mass: 3,
 };
 
-const ChakraCarousel = ({ children, gap }) => {
+function ChakraCarousel({ children, gap }) {
   const [trackIsActive, setTrackIsActive] = useState(false);
   const [multiplier, setMultiplier] = useState(0.35);
   const [sliderWidth, setSliderWidth] = useState(0);
@@ -45,17 +45,17 @@ const ChakraCarousel = ({ children, gap }) => {
 
   const positions = useMemo(
     () => children.map((_, index) => -Math.abs((itemWidth + gap) * index)),
-    [children, itemWidth, gap]
+    [children, itemWidth, gap],
   );
 
   const { breakpoints } = useTheme();
 
   const [isBetweenBaseAndMd] = useMediaQuery(
-    `(min-width: ${breakpoints.base}) and (max-width: ${breakpoints.md})`
+    `(min-width: ${breakpoints.base}) and (max-width: ${breakpoints.md})`,
   );
 
   const [isBetweenMdAndXl] = useMediaQuery(
-    `(min-width: ${breakpoints.md}) and (max-width: ${breakpoints.xl})`
+    `(min-width: ${breakpoints.md}) and (max-width: ${breakpoints.xl})`,
   );
 
   const [isGreaterThanXL] = useMediaQuery(`(min-width: ${breakpoints.xl})`);
@@ -86,7 +86,7 @@ const ChakraCarousel = ({ children, gap }) => {
     constraint,
     itemWidth,
     positions,
-    gap
+    gap,
   };
 
   const trackProps = {
@@ -99,7 +99,7 @@ const ChakraCarousel = ({ children, gap }) => {
     multiplier,
     itemWidth,
     positions,
-    gap
+    gap,
   };
 
   const itemProps = {
@@ -110,7 +110,7 @@ const ChakraCarousel = ({ children, gap }) => {
     constraint,
     itemWidth,
     positions,
-    gap
+    gap,
   };
 
   return (
@@ -124,9 +124,9 @@ const ChakraCarousel = ({ children, gap }) => {
       </Track>
     </Slider>
   );
-};
+}
 
-const Slider = ({
+function Slider({
   setTrackIsActive,
   initSliderWidth,
   setActiveItem,
@@ -135,14 +135,14 @@ const Slider = ({
   itemWidth,
   positions,
   children,
-  gap
-}) => {
+  gap,
+}) {
   const [ref, { width }] = useBoundingRect();
 
-  useLayoutEffect(() => initSliderWidth(Math.round(width)), [
-    width,
-    initSliderWidth
-  ]);
+  useLayoutEffect(
+    () => initSliderWidth(Math.round(width)),
+    [width, initSliderWidth],
+  );
 
   const handleFocus = () => setTrackIsActive(true);
 
@@ -175,7 +175,7 @@ const Slider = ({
           zIndex: 1,
           h: "100%",
           left: 0,
-          top: 0
+          top: 0,
         }}
         _after={{
           bgGradient: "linear(to-l, base.d400, transparent)",
@@ -185,7 +185,7 @@ const Slider = ({
           zIndex: 1,
           h: "100%",
           right: 0,
-          top: 0
+          top: 0,
         }}
       >
         {children}
@@ -212,8 +212,8 @@ const Slider = ({
           h="3px"
           sx={{
             "> div": {
-              backgroundColor: "gray.400"
-            }
+              backgroundColor: "gray.400",
+            },
           }}
         />
 
@@ -231,9 +231,9 @@ const Slider = ({
       </Flex>
     </>
   );
-};
+}
 
-const Track = ({
+function Track({
   setTrackIsActive,
   trackIsActive,
   setActiveItem,
@@ -242,8 +242,8 @@ const Track = ({
   multiplier,
   itemWidth,
   positions,
-  children
-}) => {
+  children,
+}) {
   const [dragStartPosition, setDragStartPosition] = useState(0);
   const controls = useAnimation();
   const x = useMotionValue(0);
@@ -275,8 +275,8 @@ const Track = ({
         x: closestPosition,
         transition: {
           velocity: info.velocity.x,
-          ...transitionProps
-        }
+          ...transitionProps,
+        },
       });
     } else {
       setActiveItem(positions.length - constraint);
@@ -284,8 +284,8 @@ const Track = ({
         x: positions[positions.length - constraint],
         transition: {
           velocity: info.velocity.x,
-          ...transitionProps
-        }
+          ...transitionProps,
+        },
       });
     }
   };
@@ -295,10 +295,10 @@ const Track = ({
       controls.start({
         x: positions[activeItem],
         transition: {
-          ...transitionProps
-        }
+          ...transitionProps,
+        },
       }),
-    [activeItem, controls, positions]
+    [activeItem, controls, positions],
   );
 
   const handleClick = useCallback(
@@ -306,7 +306,7 @@ const Track = ({
       node.current.contains(event.target)
         ? setTrackIsActive(true)
         : setTrackIsActive(false),
-    [setTrackIsActive]
+    [setTrackIsActive],
   );
 
   const handleKeyDown = useCallback(
@@ -326,7 +326,7 @@ const Track = ({
         }
       }
     },
-    [trackIsActive, setActiveItem, activeItem, constraint, positions.length]
+    [trackIsActive, setActiveItem, activeItem, constraint, positions.length],
   );
 
   useEffect(() => {
@@ -362,9 +362,9 @@ const Track = ({
       )}
     </>
   );
-};
+}
 
-const Item = ({
+function Item({
   setTrackIsActive,
   setActiveItem,
   activeItem,
@@ -373,14 +373,14 @@ const Item = ({
   positions,
   children,
   index,
-  gap
-}) => {
+  gap,
+}) {
   const [userDidTab, setUserDidTab] = useState(false);
 
   const handleFocus = () => setTrackIsActive(true);
 
   const handleBlur = () => {
-    userDidTab && index + 1 === positions.length && setTrackIsActive(false);
+    // userDidTab && index + 1 === positions.length && setTrackIsActive(false);
     setUserDidTab(false);
   };
 
@@ -399,13 +399,13 @@ const Item = ({
       onKeyDown={handleKeyDown}
       w={`${itemWidth}px`}
       _notLast={{
-        mr: `${gap}px`
+        mr: `${gap}px`,
       }}
       py="4px"
     >
       {children}
     </Flex>
   );
-};
+}
 
 export default ChakraCarousel;

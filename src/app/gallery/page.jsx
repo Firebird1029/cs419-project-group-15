@@ -16,8 +16,8 @@ import {
   Text,
 } from "@chakra-ui/react";
 import Link from "next/link";
-import createClient from "@/utils/supabase/server";
 import NextLink from "next/link";
+import createClient from "@/utils/supabase/server";
 
 export default async function GalleryPage() {
   const supabase = createClient();
@@ -51,19 +51,29 @@ export default async function GalleryPage() {
           </Thead>
           <Tbody>
             {allGames.map(
-              ({ id, name, type, url_tag: url, profiles: { username, avatar } }) => (
+              ({
+                id,
+                name,
+                type,
+                url_tag: url,
+                profiles: { username, avatar },
+              }) => (
                 <Tr key={id}>
                   <Td>{name}</Td>
                   <Td>{type}</Td>
-                  
-                    <Td>
-                      <Link as={NextLink} href={`user/?username=`+username} passHref>
-                        <HStack>
-                          <Avatar src={avatar}/>
-                          <Text>{username}</Text>
-                        </HStack>
-                      </Link>
-                    </Td>
+
+                  <Td>
+                    <Link
+                      as={NextLink}
+                      href={`user/?username=${username}`}
+                      passHref
+                    >
+                      <HStack>
+                        <Avatar src={avatar} />
+                        <Text>{username}</Text>
+                      </HStack>
+                    </Link>
+                  </Td>
                   <Td>
                     <Link href={`/g/${url}`}>
                       <Button colorScheme="green">Play</Button>

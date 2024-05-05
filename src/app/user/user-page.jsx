@@ -5,29 +5,37 @@
 
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
-import { Input, 
-          Box, 
-          Avatar, 
-          Flex, 
-          Center, 
-          Text, 
-          Square, 
-          Card, 
-          CardHeader, 
-          CardBody, 
-          CardFooter, 
-          Stack, 
-          Heading, 
-          Divider, 
-          ButtonGroup, 
-          Button, 
-          Image,
-          Wrap,
-          WrapItem, IconButton, Alert, AlertIcon, Spinner, AlertTitle, AlertDescription, CloseButton } from "@chakra-ui/react";
+import React, { useCallback, useEffect, useState, useRef } from "react";
+import {
+  Input,
+  Box,
+  Avatar,
+  Flex,
+  Center,
+  Text,
+  Square,
+  Card,
+  CardHeader,
+  CardBody,
+  CardFooter,
+  Stack,
+  Heading,
+  Divider,
+  ButtonGroup,
+  Button,
+  Image,
+  Wrap,
+  WrapItem,
+  IconButton,
+  Alert,
+  AlertIcon,
+  Spinner,
+  AlertTitle,
+  AlertDescription,
+  CloseButton,
+} from "@chakra-ui/react";
 import createClient from "@/utils/supabase/client";
-import React, { useRef } from 'react';
-import Carousel from "../carousel/index"
+import Carousel from "../carousel/index";
 
 // import {useParams} from 'react-router-dom';
 
@@ -48,7 +56,7 @@ export default function AccountForm() {
   // const name = params.get('username'); //Get user from url query params
 
   async function setUserInformation(userid) {
-    //SET BASIC USER INFORMATION
+    // SET BASIC USER INFORMATION
     try {
       const { data, error, status } = await supabase
         .from("profiles")
@@ -71,13 +79,12 @@ export default function AccountForm() {
       console.log(error);
     }
 
-    //SET CREATED GAMES
+    // SET CREATED GAMES
     try {
       const { data, error, status } = await supabase
         .from("games")
         .select("*, profiles!inner(username, avatar)")
         .eq("owner", userid);
-
 
       if (error && status !== 406) {
         throw error;
@@ -91,7 +98,7 @@ export default function AccountForm() {
       console.log(error);
     }
 
-    //SET REVIEWS
+    // SET REVIEWS
     try {
       const { data, error, status } = await supabase
         .from("ratings")
@@ -111,84 +118,76 @@ export default function AccountForm() {
     }
   }
 
-  const getProfile = useCallback(async (name) => {
-    if (name != null) {
-      try {
+  const getProfile = useCallback(
+    async (name) => {
+      if (name != null) {
+        try {
+          const { data, error1, status1 } = await supabase
+            .from("profiles")
+            .select(`id`)
+            .eq("username", name)
+            .single();
 
-        const {data, error1, status1 } = await supabase
-          .from("profiles")
-          .select(`id`)
-          .eq("username", name)
-          .single();
-        
-        if (data) {
-          setUserID(data.id);
-          setUserInformation(data.id)
+          if (data) {
+            setUserID(data.id);
+            setUserInformation(data.id);
+          }
+        } catch (error) {
+          console.log("GOT HERE 4");
+          // alert("Error loading user data!");
+          console.log(error);
         }
-        
-      } catch (error) {
-        
-      console.log("GOT HERE 4");
-        // alert("Error loading user data!");
-        console.log(error);
       }
-      
-    }
-    
-  }, [user, supabase]);
+    },
+    [user, supabase],
+  );
 
   useEffect(() => {
-    let search = window.location.search;
-    let params = new URLSearchParams(search);
-    const name = params.get('username'); //Get user from url query params
+    const { search } = window.location;
+    const params = new URLSearchParams(search);
+    const name = params.get("username"); // Get user from url query params
     getProfile(name);
   }, [user, getProfile]);
 
   return (
     <Box>
-        <Flex >
-        <Box margin='9'>
-          <Card maxW='sm' margin=''>
-              <CardBody>
-                <Box align='center'>
-                  <Avatar
-                    src={avatarUrl}
-                    height="330px"
-                    width="330px"
-                    borderRadius='50%'
-                    alt='Users profile pic'
-                    object-fit= "cover"
-                  />
-                </Box>
-                <Stack mt='6' spacing='3'>
-                  <Heading align='center' size='md'>{fullname} @ {username}</Heading>
-                </Stack>
-              </CardBody>
+      <Flex>
+        <Box margin="9">
+          <Card maxW="sm" margin="">
+            <CardBody>
+              <Box align="center">
+                <Avatar
+                  src={avatarUrl}
+                  height="330px"
+                  width="330px"
+                  borderRadius="50%"
+                  alt="Users profile pic"
+                  object-fit="cover"
+                />
+              </Box>
+              <Stack mt="6" spacing="3">
+                <Heading align="center" size="md">
+                  {fullname} @ {username}
+                </Heading>
+              </Stack>
+            </CardBody>
           </Card>
         </Box>
-        <Box flex='1' margin='9'>
+        <Box flex="1" margin="9">
           <Card>
             <CardBody>
               <Box>
-                <Heading>Created Games</Heading> 
-                  <Carousel data={createdGames}/>
+                <Heading>Created Games</Heading>
+                <Carousel data={createdGames} />
               </Box>
             </CardBody>
 
             <Divider />
-            <CardFooter>
-              
-            </CardFooter>
-
+            <CardFooter />
           </Card>
         </Box>
-        
       </Flex>
-      <Box>
-        
-        
-      </Box>
+      <Box />
     </Box>
-
   );
 }

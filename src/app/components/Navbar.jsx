@@ -66,11 +66,11 @@ export default function Nav({ user }) {
           .select(`full_name, username, website, avatar`)
           .eq("id", user.id)
           .single();
-  
+
         if (error && status !== 406) {
           throw error;
         }
-  
+
         if (data) {
           setFullname(data.full_name);
           setUsername(data.username);
@@ -134,7 +134,11 @@ export default function Nav({ user }) {
                   </Center>
                   <br />
                   <MenuDivider />
-                  <MenuItem as={NextLink} href={`user/?username=`+username} passHref>
+                  <MenuItem
+                    as={NextLink}
+                    href={`user/?username=${username}`}
+                    passHref
+                  >
                     Your Games
                   </MenuItem>
                   <MenuItem as={NextLink} href={"/account"}>

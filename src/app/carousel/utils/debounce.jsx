@@ -1,9 +1,9 @@
 export default function debounce(limit, callback) {
-  let timeoutId
+  let timeoutId;
   return (...args) => {
     if (timeoutId) {
-      clearTimeout(timeoutId)
+      clearTimeout(timeoutId);
     }
-    timeoutId = setTimeout(callback, limit, args)
-  }
+    timeoutId = setTimeout(callback, limit, args);
+  };
 }

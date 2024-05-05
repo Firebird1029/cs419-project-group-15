@@ -5,14 +5,17 @@ import { Box, Container, Heading } from "@chakra-ui/react";
 import Carousel from "./carousel/index";
 import createClient from "@/utils/supabase/client";
 
-
 export default function Home() {
   const supabase = createClient();
   const [data, setData] = useState([]);
 
   const allGames = useCallback(async () => {
     try {
-      const { data: allGameData, error, status} = await supabase
+      const {
+        data: allGameData,
+        error,
+        status,
+      } = await supabase
         .from("games")
         .select("*, profiles!inner(username, avatar)")
         .limit(10);

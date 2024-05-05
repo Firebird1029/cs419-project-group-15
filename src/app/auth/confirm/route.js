@@ -26,7 +26,6 @@ export async function GET(request) {
       redirectTo.searchParams.delete("next");
       return NextResponse.redirect(redirectTo);
     }
-    console.log(error.message);
   }
 
   // return the user to an error page with some instructions

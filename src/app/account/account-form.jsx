@@ -5,7 +5,7 @@
 
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, useRef } from "react";
 import {
   Input,
   Box,
@@ -28,7 +28,6 @@ import {
   AlertDescription,
   CloseButton,
 } from "@chakra-ui/react";
-import React, { useRef } from "react";
 import createClient from "@/utils/supabase/client";
 
 export default function AccountForm({ user }) {
@@ -62,39 +61,39 @@ export default function AccountForm({ user }) {
     // You can do further processing with the selected file here
   };
 
-  const disabledVariant = {
-    base: {
-      bg: "gray.200", // Background color for disabled state
-      _hover: {
-        bg: "gray.200", // Hover background color for disabled state
-      },
-      _active: {
-        bg: "gray.200", // Active background color for disabled state
-      },
-    },
-  };
+  // const disabledVariant = {
+  //   base: {
+  //     bg: "gray.200", // Background color for disabled state
+  //     _hover: {
+  //       bg: "gray.200", // Hover background color for disabled state
+  //     },
+  //     _active: {
+  //       bg: "gray.200", // Active background color for disabled state
+  //     },
+  //   },
+  // };
 
   const getProfile = useCallback(async () => {
     if (user) {
       try {
         setLoading(true);
-  
+
         const { data, error, status } = await supabase
           .from("profiles")
           .select(`full_name, username, website, avatar`)
           .eq("id", user.id)
           .single();
-  
+
         if (error && status !== 406) {
           throw error;
         }
-  
+
         if (data) {
           setFullname(data.full_name);
           setUsername(data.username);
           setWebsite(data.website);
           setAvatarUrl(data.avatar);
-  
+
           setOGName(data.full_name);
           setOGUserName(data.username);
           setOGAvatar(data.avatar);
@@ -115,7 +114,7 @@ export default function AccountForm({ user }) {
   async function getMedia() {
     const { data } = supabase.storage
       .from("pfps")
-      .getPublicUrl(user.id + "/uploaded-pfp");
+      .getPublicUrl(`${user.id}/uploaded-pfp`);
 
     return data;
   }
@@ -140,7 +139,7 @@ export default function AccountForm({ user }) {
       const { error } = await supabase.from("profiles").upsert({
         id: user.id,
         full_name: fullname,
-        username: username,
+        username,
         website_,
         avatar: avatarUrl,
         updated_at: new Date().toISOString(),
@@ -149,20 +148,20 @@ export default function AccountForm({ user }) {
       if (selectedFile) {
         const { data, error } = await supabase.storage
           .from("pfps")
-          .upload(user.id + "/uploaded-pfp", selectedFile);
+          .upload(`${user.id}/uploaded-pfp`, selectedFile);
 
         if (error) {
           const { data, error } = await supabase.storage
             .from("pfps")
-            .update(user.id + "/uploaded-pfp", selectedFile, {
+            .update(`${user.id}/uploaded-pfp`, selectedFile, {
               upsert: true,
             });
         }
 
-        var media = await getMedia();
+        const media = await getMedia();
         if (media) {
-          //https://stackoverflow.com/questions/77523252/the-image-is-not-re-loaded-from-supabase <Thank god for this
-          var url = media.publicUrl + `?q=${Date.now()}`;
+          // https://stackoverflow.com/questions/77523252/the-image-is-not-re-loaded-from-supabase <Thank god for this
+          const url = `${media.publicUrl}?q=${Date.now()}`;
           setAvatarUrl(url);
           const { error } = await supabase.from("profiles").upsert({
             id: user.id,
@@ -177,14 +176,12 @@ export default function AccountForm({ user }) {
       if (error) throw error;
       setStatus(true);
     } catch (error) {
-      if (error.code == 23505) {
+      if (error.code === 23505) {
         setError(
-          'The username "' +
-            username +
-            '" is already taken. Please try a different username.',
+          `The username "${username}" is already taken. Please try a different username.`,
         );
       } else {
-        setError("Errored with code " + error.code + "... Please try again.");
+        setError(`Errored with code ${error.code}... Please try again.`);
       }
     } finally {
       setLoading(false);
@@ -517,16 +514,5 @@ export default function AccountForm({ user }) {
         )}
       </Box>
     </Box>
-
-    //   <div>
-    //     <label htmlFor="website">Website</label>
-    //     <Input
-    //       id="website"
-    //       type="url"
-    //       value={website || ""}
-    //       onChange={(e) => setWebsite(e.target.value)}
-    //       disabled={loading}
-    //     />
-    //   </div>
   );
 }

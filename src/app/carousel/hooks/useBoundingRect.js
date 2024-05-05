@@ -20,7 +20,7 @@ function getDimensionObject(node) {
     x: rect.x,
     y: rect.y,
     right: rect.right,
-    bottom: rect.bottom
+    bottom: rect.bottom,
   };
 }
 
@@ -33,15 +33,15 @@ export default function useBoundingRect(limit) {
   }, []);
 
   useLayoutEffect(() => {
-    if ("undefined" !== typeof window && node) {
+    if (typeof window !== "undefined" && node) {
       const measure = () =>
         window.requestAnimationFrame(() =>
-          setDimensions(getDimensionObject(node))
+          setDimensions(getDimensionObject(node)),
         );
 
       measure();
 
-      const listener = debounce(limit ? limit : 100, measure);
+      const listener = debounce(limit || 100, measure);
 
       window.addEventListener("resize", listener);
       window.addEventListener("scroll", listener);
