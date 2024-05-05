@@ -10,7 +10,7 @@ export default function Home() {
 
   const allGames = useCallback(async () => {
     try {
-      const { data: allGameData, error, status} = await supabase.from("games").select("*, profiles!inner(username)");
+      const { data: allGameData, error, status} = await supabase.from("games").select("*, profiles!inner(username)").limit(10);
 
       if (error && status !== 406) {
         throw error;

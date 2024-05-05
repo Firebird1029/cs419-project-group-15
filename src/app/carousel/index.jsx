@@ -22,30 +22,30 @@ import {
 
 import ChakraCarousel from "./ChakraCarousel";
 
-export default function App() {
-  const supabase = createClient();
-  const [data, setData] = useState([]);
+export default function App({data}) {
+  // const supabase = createClient();
+  // const [data, setData] = useState([]);
 
-  const allGames = useCallback(async () => {
-    try {
-      const { data: allGameData, error, status} = await supabase.from("games").select("*, profiles!inner(username)");
+  // const allGames = useCallback(async () => {
+  //   try {
+  //     const { data: allGameData, error, status} = await supabase.from("games").select("*, profiles!inner(username)");
 
-      if (error && status !== 406) {
-        throw error;
-      }
+  //     if (error && status !== 406) {
+  //       throw error;
+  //     }
 
-      if (data) {
-        setData(allGameData);
-      }
-    } catch (error) {
-      alert("Error loading games!");
-      console.log(error);
-    }
-  }, [supabase]);
+  //     if (data) {
+  //       setData(allGameData);
+  //     }
+  //   } catch (error) {
+  //     alert("Error loading games!");
+  //     console.log(error);
+  //   }
+  // }, [supabase]);
 
-  useEffect(() => {
-    allGames();
-  }, [allGames]);
+  // useEffect(() => {
+  //   allGames();
+  // }, [allGames]);
 
   return (
     
@@ -64,7 +64,7 @@ export default function App() {
       >
         <ChakraCarousel gap={32}>
           {/* TODO: instead of just limiting data from query, try to sort by rating for featured games */}
-          {data.slice(1, 10).map(({id, description, name, type, url_tag: url, profiles: { username }}) => (
+          {data.map(({id, description, name, type, url_tag: url, profiles: { username }}) => (
             <Flex
               key={id}
               boxShadow="rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px"

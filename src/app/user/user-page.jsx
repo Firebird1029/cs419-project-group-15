@@ -76,7 +76,7 @@ export default function AccountForm() {
     try {
       const { data, error, status } = await supabase
         .from("games")
-        .select(`name, type, url_tag, description, created_at`)
+        .select("*, profiles!inner(username)")
         .eq("owner", userid);
         // .maybeSingle();
 
