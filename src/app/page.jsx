@@ -1,60 +1,41 @@
-import NextLink from "next/link";
-import { Box, Button, Container, Heading, Link } from "@chakra-ui/react";
-import createClient from "@/utils/supabase/server";
+"use client"
+import { useCallback, useEffect, useState } from "react";
+import Carousel from "./carousel/index"
+import createClient from "@/utils/supabase/client";
+import { Box, Container, Heading } from "@chakra-ui/react";
 
-export default async function Home() {
+export default function Home() {
   const supabase = createClient();
+  const [data, setData] = useState([]);
 
-  // Ensure user is logged in
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
+  const allGames = useCallback(async () => {
+    try {
+      const { data: allGameData, error, status} = await supabase.from("games").select("*, profiles!inner(username)");
+
+      if (error && status !== 406) {
+        throw error;
+      }
+
+      if (data) {
+        setData(allGameData);
+      }
+    } catch (error) {
+      alert("Error loading games!");
+      console.log(error);
+    }
+  }, [supabase]);
+
+  useEffect(() => {
+    allGames();
+  }, [allGames]);
 
   return (
-    <Container>
-      <Heading mt={4} mb={8}>
-        Home
-      </Heading>
-
-      {/* TODO move these links to navbar etc */}
-
-      <Box mb={12}>
-        <Link as={NextLink} href="/gallery">
-          <Button colorScheme="blue">Gallery</Button>
-        </Link>
-      </Box>
-
-      {user && (
-        <Box mb={16}>
-          <Link as={NextLink} href="/account">
-            <Button>Profile</Button>
-          </Link>
-          <br />
-          <br />
-          <Link as={NextLink} href="/create">
-            <Button colorScheme="blue">Create Game</Button>
-          </Link>
-          <br />
-          <br />
-          <form action="/auth/signout" method="post">
-            <Button type="submit">Sign out</Button>
-          </form>
-        </Box>
-      )}
-
-      {!user && (
-        <Box mb={16}>
-          <Link as={NextLink} href="/login">
-            <Button colorScheme="blue">Login</Button>
-          </Link>
-          <br />
-          <br />
-          <Link as={NextLink} href="/register">
-            <Button colorScheme="green">Register</Button>
-          </Link>
-        </Box>
-      )}
-    </Container>
-  );
+    <Box padding="50px">
+      <Container maxW='container.xl'>
+        <Heading color='#8fffb2'>Featured Games</Heading>
+        <Carousel data={data}/>
+      </Container>
+    </Box>
+    
+  )
 }

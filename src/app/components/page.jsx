@@ -1,8 +1,8 @@
 import { redirect } from "next/navigation";
-import AccountForm from "./account-form";
+import Nav from "./Navbar";
 import createClient from "@/utils/supabase/server";
 
-export default async function Account() {
+export default async function FullNavBar() {
   const supabase = createClient();
   // Ensure user is logged in
   const {
@@ -13,5 +13,5 @@ export default async function Account() {
     redirect("/login");
   }
 
-  return <AccountForm user={user} />;
+  return <Nav user={user} />;
 }

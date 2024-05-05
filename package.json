@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "flask-dev": "pip3 install -r api/requirements.txt && python3 -m flask --app api/index run --debug -p 5328",
+    "flask-dev": "python -m pip install -r api/requirements.txt && python -m flask --app api/index run --debug -p 5328",
     "next-dev": "next dev",
     "dev": "concurrently \"npm run flask-dev\" \"npm run next-dev\" --kill-others",
     "build": "next build",
@@ -15,6 +15,7 @@
   "dependencies": {
     "@chakra-ui/next-js": "^2.2.0",
     "@chakra-ui/react": "^2.8.2",
+    "@chakra-ui/icons": "^2.0.16",
     "@emotion/react": "^11.11.3",
     "@emotion/styled": "^11.11.0",
     "@supabase/ssr": "^0.1.0",
@@ -24,7 +25,11 @@
     "framer-motion": "^11.0.5",
     "next": "14.1.0",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "@fontsource/inter": "4.2.2",
+    "emotion-theming": "11.0.0",
+    "fontsource-inter": "4.0.0",
+    "react-scripts": "4.0.3"
   },
   "devDependencies": {
     "eslint": "^8.56.0",
