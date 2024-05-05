@@ -14,7 +14,7 @@ To install the frontend NPM packages:
 npm install
 ```
 
-You will need a `.env.local` in the root directory and a `.env` in the `api/` folder with the relevant Supabase environment variables in each file.
+You will need a `.env.local` in the root directory and a `.env` in the `api/` folder with the relevant Supabase environment variables in each file. You can find them here: <https://docs.google.com/document/d/1gc9dUpL6MRiZikNFrAJylOsWyr1DOXzu1rsd3XfYvjk/edit>.
 
 ## Local Development
 
