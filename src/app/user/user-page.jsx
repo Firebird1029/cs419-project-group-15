@@ -75,7 +75,7 @@ export default function AccountForm() {
     try {
       const { data, error, status } = await supabase
         .from("games")
-        .select("*, profiles!inner(username)")
+        .select("*, profiles!inner(username, avatar)")
         .eq("owner", userid);
 
 

@@ -4,6 +4,7 @@ import "fontsource-inter/500.css";
 import ReactDOM from "react-dom";
 import theme from "./theme";
 import createClient from "@/utils/supabase/client";
+import NextLink from "next/link";
 
 //https://codesandbox.io/p/sandbox/chakra-carousel-dd8vn?file=%2Fsrc%2Findex.js
 import {
@@ -17,14 +18,15 @@ import {
   Text,
   Flex,
   Tag,
-  Link
+  Link,
+  Avatar
 } from "@chakra-ui/react";
 
 import ChakraCarousel from "./ChakraCarousel";
 
 export default function App({data}) {
   // const supabase = createClient();
-  // const [data, setData] = useState([]);
+  // const [avatar, setAvatar] = useState();
 
   // const allGames = useCallback(async () => {
   //   try {
@@ -47,6 +49,8 @@ export default function App({data}) {
   //   allGames();
   // }, [allGames]);
 
+
+
   return (
     
     <ChakraProvider theme={extendTheme(theme)}>
@@ -64,7 +68,7 @@ export default function App({data}) {
       >
         <ChakraCarousel gap={32}>
           {/* TODO: instead of just limiting data from query, try to sort by rating for featured games */}
-          {data.map(({id, description, name, type, url_tag: url, profiles: { username }}) => (
+          {data.map(({id, description, name, type, url_tag: url, profiles: { username, avatar }}) => (
             <Flex
               key={id}
               boxShadow="rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px"
@@ -91,9 +95,14 @@ export default function App({data}) {
 
               <Flex justifyContent="space-between">
                 <HStack spacing={2}>
-                  <Tag size="sm" variant="outline" colorScheme="green">
-                    User: {username}
-                  </Tag>
+                  <Link as={NextLink} href={`user/?username=`+username} passHref>
+                      <HStack>
+                        <Avatar src={avatar} />
+                        <Tag size="sm" variant="outline" colorScheme="green">
+                          User: {username}
+                        </Tag>
+                      </HStack>
+                    </Link>
                   <Tag size="sm" variant="outline" colorScheme="cyan">
                     Type: {type}
                   </Tag>
