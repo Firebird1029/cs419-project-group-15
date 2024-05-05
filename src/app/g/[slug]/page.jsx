@@ -18,8 +18,10 @@ import { getGame, updateScoreboard } from "@/services/apiService";
 
 // Riddle Type Game
 function Riddle({ question, answer, saveToScoreboard }) {
+  const router = useRouter();
   const [guess, setGuess] = useState("");
   const [result, setResult] = useState("");
+  const [timer, setTimer] = useState(60); // Timer starts at 60 seconds
 
   // check if user's guess matches the answer when "Guess" button is clicked
   function checkAnswer() {
@@ -32,6 +34,25 @@ function Riddle({ question, answer, saveToScoreboard }) {
     }
   }
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTimer((prevTimer) => prevTimer - 1);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  function formatTime(time) {
+    const minutes = Math.floor(time / 60);
+    const seconds = time % 60;
+    return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+  }
+
+  useEffect(() => {
+    if (timer === 0) {
+      router.back();
+    }
+  }, [timer, router]);
+
   return (
     <Container pt={24}>
       <VStack>
@@ -40,7 +61,7 @@ function Riddle({ question, answer, saveToScoreboard }) {
             {question}
           </Heading>
         </Center>
-
+        <Text>Time remaining: {formatTime(timer)}</Text>
         <Stack width="20rem" mb={12}>
           <Input
             type="text"
