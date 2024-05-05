@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import {
   Box,
@@ -18,17 +18,17 @@ import {
   Center,
   Image,
   Link,
-} from '@chakra-ui/react';
+} from "@chakra-ui/react";
 
-import { MoonIcon, SunIcon } from '@chakra-ui/icons';
+// import { MoonIcon, SunIcon } from '@chakra-ui/icons';
 import { useCallback, useEffect, useState } from "react";
 
-import Drawer from "./DrawerMenu"
 import NextLink from "next/link";
+import Drawer from "./DrawerMenu";
 // import checkUser from '../AuthContext';
 import createClient from "@/utils/supabase/client";
 
-const NavLink = (props) => {
+function NavLink(props) {
   const { children } = props;
 
   return (
@@ -36,19 +36,20 @@ const NavLink = (props) => {
       as="a"
       px={2}
       py={1}
-      rounded={'md'}
+      rounded={"md"}
       _hover={{
-        textDecoration: 'none',
-        bg: useColorModeValue('gray.200', 'gray.700'),
+        textDecoration: "none",
+        bg: useColorModeValue("gray.200", "gray.700"),
       }}
-      href={'#'}>
+      href={"#"}
+    >
       {children}
     </Box>
   );
-};
+}
 
-export default function Nav({user}) {
-  const { colorMode, toggleColorMode } = useColorMode();
+export default function Nav({ user }) {
+  // const { colorMode, toggleColorMode } = useColorMode();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const supabase = createClient();
@@ -86,77 +87,80 @@ export default function Nav({user}) {
   }, [user, getProfile]);
 
   return (
-    <>
-      <Box bg={useColorModeValue('gray.100', 'gray.900')} px={4}>
-        <Flex h={16} alignItems={'center'} justifyContent={'space-between'}>
-          <Drawer user={user}/>
-          <Box>
-            <Link as={NextLink} href="/">
-              <Image
-                width="100%"
-                maxWidth="280px" // Set maximum width
-                maxHeight="auto"
-                objectFit='cover'
-                borderRadius='full'
-                src="/mindmatrix.png"
-                alt="Logo of the website"
-              />
-            </Link>
-          </Box>
-          <Flex alignItems={'center'}>
-            <Stack direction={'row'} spacing={7}>
-              <Button onClick={toggleColorMode}>
+    <Box bg={useColorModeValue("gray.100", "gray.900")} px={4}>
+      <Flex h={16} alignItems={"center"} justifyContent={"space-between"}>
+        <Drawer user={user} />
+        <Box>
+          <Link as={NextLink} href="/">
+            <Image
+              width="100%"
+              maxWidth="280px" // Set maximum width
+              maxHeight="auto"
+              objectFit="cover"
+              borderRadius="full"
+              src="/mindmatrix.png"
+              alt="Logo of the website"
+            />
+          </Link>
+        </Box>
+        <Flex alignItems={"center"}>
+          <Stack direction={"row"} spacing={7}>
+            {/* <Button onClick={toggleColorMode}>
                 {colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
-              </Button>
-              {user && (
-                <Menu>
-                  <MenuButton
-                    as={Button}
-                    rounded={'full'}
-                    variant={'link'}
-                    cursor={'pointer'}
-                    minW={0}>
-                    <Avatar
-                      size={'sm'}
-                      src={avatarUrl}
-                    />
-                  </MenuButton>
-                  <MenuList alignItems={'center'} zIndex={"999"}>
-                    <br />
-                    <Center>
-                      <Avatar
-                        size={'2xl'}
-                        src={avatarUrl}
-                      />
-                    </Center>
-                    <br />
-                    <Center>
-                      <p>{fullname} @{username}</p>
-                    </Center>
-                    <br />
-                    <MenuDivider />
-                    <MenuItem as={NextLink} href={"/gallery"}>Your Games</MenuItem>
-                    <MenuItem as={NextLink} href={"/account"}>Account Settings</MenuItem>
-                    <form action="/auth/signout" method="post">
-                      <MenuItem className="button block" type="submit">Logout</MenuItem>
-                    </form>
-                  </MenuList>
-                </Menu>
-              )}
-              {!user && (
-                <Box>
-                  <Link as={NextLink} href="/login">
-                    <Button colorScheme="blue">Login</Button>
-                  </Link>
-                  <Link as={NextLink} href="/register">
-                    <Button colorScheme="green">Register</Button>
-                  </Link>
-                </Box>
-              )}
-            </Stack>
-          </Flex>
+              </Button> */}
+            {user && (
+              <Menu>
+                <MenuButton
+                  as={Button}
+                  rounded={"full"}
+                  variant={"link"}
+                  cursor={"pointer"}
+                  minW={0}
+                >
+                  <Avatar size={"sm"} src={avatarUrl} />
+                </MenuButton>
+                <MenuList alignItems={"center"} zIndex={"999"}>
+                  <br />
+                  <Center>
+                    <Avatar size={"2xl"} src={avatarUrl} />
+                  </Center>
+                  <br />
+                  <Center>
+                    <p>
+                      {fullname} @{username}
+                    </p>
+                  </Center>
+                  <br />
+                  <MenuDivider />
+                  <MenuItem as={NextLink} href={"/gallery"}>
+                    Your Games
+                  </MenuItem>
+                  <MenuItem as={NextLink} href={"/account"}>
+                    Account Settings
+                  </MenuItem>
+                  <form action="/auth/signout" method="post">
+                    <MenuItem className="button block" type="submit">
+                      Logout
+                    </MenuItem>
+                  </form>
+                </MenuList>
+              </Menu>
+            )}
+            {!user && (
+              <Box>
+                <Link as={NextLink} href="/login">
+                  <Button colorScheme="blue" marginRight={2}>
+                    Login
+                  </Button>
+                </Link>
+                <Link as={NextLink} href="/register">
+                  <Button colorScheme="green">Register</Button>
+                </Link>
+              </Box>
+            )}
+          </Stack>
         </Flex>
-      </Box>
-    </>
+      </Flex>
+    </Box>
   );
 }
