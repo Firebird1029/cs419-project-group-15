@@ -50,5 +50,8 @@
       "eslint --cache --fix",
       "prettier --write --config ./.prettierrc"
     ]
+  },
+  "engines": {
+    "node": "^22 || ^24"
   }
 }
