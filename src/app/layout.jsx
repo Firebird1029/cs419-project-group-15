@@ -1,9 +1,8 @@
-// "use client"
 import { Inter } from "next/font/google";
 
-import { ChakraProvider } from "@chakra-ui/react";
+import CustomChakraProvider from "@/components/ChakraProvider";
 import WithSubnavigation from "./components/Navbar";
-// import Providers from "./providers"; <Do we even need this file?
+import Footer from "./components/Footer";
 import createClient from "@/utils/supabase/server";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -30,12 +29,13 @@ export default async function RootLayout({ children }) {
     <html lang="en">
       <head />
       <body className={inter.className}>
-        <ChakraProvider>
+        <CustomChakraProvider>
           <div>
             <WithSubnavigation user={user} />
             {children}
+            <Footer />
           </div>
-        </ChakraProvider>
+        </CustomChakraProvider>
       </body>
     </html>
   );

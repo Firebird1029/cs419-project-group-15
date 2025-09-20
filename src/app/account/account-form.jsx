@@ -27,6 +27,16 @@ import {
   AlertTitle,
   AlertDescription,
   CloseButton,
+  Container,
+  VStack,
+  HStack,
+  Text,
+  FormControl,
+  FormLabel,
+  Badge,
+  useColorModeValue,
+  Grid,
+  GridItem,
 } from "@chakra-ui/react";
 import createClient from "@/utils/supabase/client";
 
@@ -136,6 +146,29 @@ export default function AccountForm({ user }) {
   async function updateProfile({ website_ }) {
     try {
       setLoading(true);
+
+      // Check if username has changed and if it's already taken
+      if (usernameChanged && username !== originalUserName) {
+        console.log('Checking username availability:', username);
+        const { data: existingProfile, error: usernameError } = await supabase
+          .from('profiles')
+          .select('username')
+          .eq('username', username)
+          .neq('id', user.id) // Exclude current user
+          .single();
+
+        if (existingProfile) {
+          setError(`The username "${username}" is already taken. Please choose a different username.`);
+          setLoading(false);
+          return;
+        }
+
+        if (usernameError && usernameError.code !== 'PGRST116') {
+          // PGRST116 is "not found" which is what we want
+          console.error('Error checking username availability:', usernameError);
+        }
+      }
+
       const { error } = await supabase.from("profiles").upsert({
         id: user.id,
         full_name: fullname,
@@ -206,313 +239,376 @@ export default function AccountForm({ user }) {
   }
 
   return (
-    <Box>
-      <Flex color="white">
-        <Box margin="9">
-          <Card maxW="sm" margin="">
-            <CardBody>
-              <Box align="center">
-                <Avatar
-                  src={avatarUrl}
-                  height="330px"
-                  width="330px"
-                  borderRadius="50%"
-                  alt="Users profile pic"
-                  object-fit="cover"
-                />
-              </Box>
-
-              <Stack mt="6" spacing="3">
-                <Heading align="center" size="md">
-                  {fullname} @ {username}
-                </Heading>
-              </Stack>
-            </CardBody>
-          </Card>
-        </Box>
-        <Box flex="1" margin="9">
-          <Card>
-            <CardBody>
-              <label htmlFor="email">Email</label>
-              <Input id="email" type="text" value={user.email} disabled />
-              <label htmlFor="fullName">Full Name</label>
-              <Input
-                id="fullName"
-                type="text"
-                value={fullname || ""}
-                onChange={function nameChanged(e) {
-                  setFullname(e.target.value);
-                  if (originalName == e.target.value) {
-                    setNameChange(false);
-                  } else {
-                    setNameChange(true);
-                  }
-                }}
-                disabled={loading}
-              />
-              <label htmlFor="username">Username</label>
-              <Input
-                id="username"
-                type="text"
-                value={username || ""}
-                onChange={function usernameChanged(e) {
-                  setUsername(e.target.value);
-                  if (originalUserName == e.target.value) {
-                    setUserChange(false);
-                  } else {
-                    setUserChange(true);
-                  }
-                }}
-                disabled={loading}
-              />
-              <Box margin="5">
-                <Divider />
-              </Box>
-              <Box margin="2">
-                <Wrap>
-                  <WrapItem>
-                    <Avatar
-                      src="profile_0.png"
-                      onClick={function avatarClick() {
-                        avatarClicked("profile_0.png");
-                      }}
-                    />
-                  </WrapItem>
-
-                  <WrapItem>
-                    <Avatar
-                      src="profile_0.1.png"
-                      onClick={function avatarClick() {
-                        avatarClicked("profile_0.1.png");
-                      }}
-                    />
-                  </WrapItem>
-
-                  <WrapItem>
-                    <Avatar
-                      src="profile_0.2.png"
-                      onClick={function avatarClick() {
-                        avatarClicked("profile_0.2.png");
-                      }}
-                    />
-                  </WrapItem>
-
-                  <WrapItem>
-                    <Avatar
-                      src="profile_0.3.png"
-                      onClick={function avatarClick() {
-                        avatarClicked("profile_0.3.png");
-                      }}
-                    />
-                  </WrapItem>
-
-                  <WrapItem>
-                    <Avatar
-                      src="profile_0.4.png"
-                      onClick={function avatarClick() {
-                        avatarClicked("profile_0.4.png");
-                      }}
-                    />
-                  </WrapItem>
-
-                  <WrapItem>
-                    <Avatar
-                      src="profile_0.5.png"
-                      onClick={function avatarClick() {
-                        avatarClicked("profile_0.5.png");
-                      }}
-                    />
-                  </WrapItem>
-
-                  <WrapItem>
-                    <Avatar
-                      src="profile_0.6.png"
-                      onClick={function avatarClick() {
-                        avatarClicked("profile_0.6.png");
-                      }}
-                    />
-                  </WrapItem>
-
-                  <WrapItem>
-                    <Avatar
-                      src="profile_1.png"
-                      onClick={function avatarClick() {
-                        avatarClicked("profile_1.png");
-                      }}
-                    />
-                  </WrapItem>
-
-                  <WrapItem>
-                    <Avatar
-                      src="profile_2.png"
-                      onClick={function avatarClick() {
-                        avatarClicked("profile_2.png");
-                      }}
-                    />
-                  </WrapItem>
-
-                  <WrapItem>
-                    <Avatar
-                      src="profile_3.png"
-                      onClick={function avatarClick() {
-                        avatarClicked("profile_3.png");
-                      }}
-                    />
-                  </WrapItem>
-
-                  <WrapItem>
-                    <Avatar
-                      src="profile_4.png"
-                      onClick={function avatarClick() {
-                        avatarClicked("profile_4.png");
-                      }}
-                    />
-                  </WrapItem>
-                  <WrapItem>
-                    <Button
-                      borderRadius="full"
-                      boxSize="55px"
-                      onClick={handleButtonClick} // Trigger file input click on button click
-                    >
-                      <Input
-                        ref={fileInputRef}
-                        type="file"
-                        onChange={handleFileChange} // Capture file selection
-                        height="100%"
-                        width="100%"
-                        position="absolute"
-                        top="0"
-                        left="0"
-                        opacity="0"
-                        aria-hidden="true"
-                        accept="image/*" // Adjust accept attribute to only accept image files
-                      />
-                      <Avatar src="upload-file.png" />
-                    </Button>
-                  </WrapItem>
-                </Wrap>
-              </Box>
-            </CardBody>
-
-            <Divider />
-            <CardFooter>
-              <ButtonGroup spacing="2">
-                <Button
-                  // variant='solid'
-                  colorScheme="blue"
-                  type="button"
-                  className="button primary block"
-                  disabled={
-                    loading ||
-                    (!usernameChanged && !nameChanged && !avatarChanged)
-                  }
-                  variant={
-                    loading ||
-                    (!usernameChanged && !nameChanged && !avatarChanged)
-                      ? "disabled"
-                      : "solid"
-                  }
-                  pointerEvents={
-                    loading ||
-                    (!usernameChanged && !nameChanged && !avatarChanged)
-                      ? "none"
-                      : "auto"
-                  } // Disable pointer events when button is disabled
-                  onClick={() =>
-                    updateProfile({
-                      website,
-                    })
-                  }
-                >
-                  {loading
-                    ? "Loading ..."
-                    : !usernameChanged && !nameChanged && !avatarChanged
-                      ? "No Changes"
-                      : "Save Changes"}
-                </Button>
-
-                <form action="/auth/signout" method="post">
-                  <Button
-                    variant="ghost"
-                    colorScheme="blue"
-                    className="button block"
-                    type="submit"
-                  >
-                    Log Out
-                  </Button>
-                </form>
-              </ButtonGroup>
-            </CardFooter>
-          </Card>
-        </Box>
-      </Flex>
-      <Box>
+    <Box minH="100vh" bg={useColorModeValue("gray.50", "gray.900")}>
+      <Container maxW="7xl" py={{ base: 8, md: 12 }} px={{ base: 4, md: 6 }}>
+        {/* Status Alerts - Top Priority */}
         {loading && (
           <Alert
             status="info"
-            height="40"
-            alignItems="center"
-            justifyContent="center"
+            borderRadius="lg"
+            mb={6}
+            bg={useColorModeValue("blue.50", "blue.900")}
           >
             <AlertIcon />
-            <Spinner
-              thickness="4px"
-              speed="0.65s"
-              emptyColor="gray.200"
-              color="blue.500"
-              margin="10"
-            />
-            Website is loading
+            <HStack>
+              <Spinner size="sm" />
+              <Text>Updating your profile...</Text>
+            </HStack>
           </Alert>
         )}
+
         {status && (
           <Alert
             status="success"
-            alignItems="center"
-            justifyContent="center"
-            height="40"
+            borderRadius="lg"
+            mb={6}
+            bg={useColorModeValue("green.50", "green.900")}
           >
             <AlertIcon />
-            <Box>
+            <Box flex="1">
               <AlertTitle>Success!</AlertTitle>
               <AlertDescription>
-                Your account settings have been updated. Please close this alert
-                to reload and apply your changes.
+                Your profile has been updated successfully.
               </AlertDescription>
             </Box>
-            <CloseButton
-              alignSelf="flex-start"
-              position="relative"
-              right={-1}
-              top={-1}
-              onClick={closeSuccess}
-            />
+            <CloseButton onClick={closeSuccess} />
           </Alert>
         )}
+
         {error && (
           <Alert
             status="error"
-            alignItems="center"
-            justifyContent="center"
-            height="40"
+            borderRadius="lg"
+            mb={6}
+            bg={useColorModeValue("red.50", "red.900")}
           >
             <AlertIcon />
-            <Box>
+            <Box flex="1">
               <AlertTitle>Error!</AlertTitle>
-              <AlertDescription>
-                Error updating the data. {error}
-              </AlertDescription>
+              <AlertDescription>{error}</AlertDescription>
             </Box>
-            <CloseButton
-              alignSelf="flex-start"
-              position="relative"
-              right={-1}
-              top={-1}
-              onClick={closeError}
-            />
+            <CloseButton onClick={closeError} />
           </Alert>
         )}
-      </Box>
+
+        {/* Header Section */}
+        <VStack spacing={6} mb={8}>
+          <Badge
+            colorScheme="brand"
+            variant="subtle"
+            px={4}
+            py={2}
+            borderRadius="full"
+            fontSize="sm"
+            fontWeight="600"
+          >
+            ⚙️ Account Settings
+          </Badge>
+          <Heading
+            as="h1"
+            fontSize={{ base: "3xl", md: "4xl" }}
+            fontWeight="800"
+            textAlign="center"
+            color="gray.900"
+            _dark={{ color: "white" }}
+            letterSpacing="-1px"
+          >
+            Manage Your Profile
+          </Heading>
+          <Text
+            fontSize="lg"
+            color="gray.600"
+            _dark={{ color: "gray.400" }}
+            textAlign="center"
+            maxW="2xl"
+          >
+            Update your profile information and customize your avatar
+          </Text>
+        </VStack>
+
+        <Grid
+          templateColumns={{ base: "1fr", lg: "1fr 2fr" }}
+          gap={8}
+          alignItems="start"
+        >
+          {/* Profile Preview Card */}
+          <GridItem>
+            <Card
+              bg={useColorModeValue("white", "gray.800")}
+              borderColor={useColorModeValue("gray.200", "gray.700")}
+              borderWidth="1px"
+              borderRadius="2xl"
+              overflow="hidden"
+              boxShadow="xl"
+            >
+              <CardBody p={8}>
+                <VStack spacing={6}>
+                  <Box position="relative">
+                    <Avatar
+                      src={avatarUrl}
+                      size="2xl"
+                      border="4px solid"
+                      borderColor="brand.200"
+                      boxShadow="lg"
+                    />
+                    {avatarChanged && (
+                      <Badge
+                        position="absolute"
+                        top="-2"
+                        right="-2"
+                        bg="green.500"
+                        color="white"
+                        borderRadius="full"
+                        fontSize="xs"
+                      >
+                        Updated
+                      </Badge>
+                    )}
+                  </Box>
+                  <VStack spacing={2} textAlign="center">
+                    <Heading
+                      size="lg"
+                      color="gray.900"
+                      _dark={{ color: "white" }}
+                    >
+                      {fullname || "Your Name"}
+                    </Heading>
+                    <Text
+                      fontSize="md"
+                      color="gray.600"
+                      _dark={{ color: "gray.400" }}
+                    >
+                      @{username || "username"}
+                    </Text>
+                    <Badge
+                      colorScheme="purple"
+                      variant="subtle"
+                      px={3}
+                      py={1}
+                      borderRadius="full"
+                    >
+                      Mind Matrix Member
+                    </Badge>
+                  </VStack>
+                </VStack>
+              </CardBody>
+            </Card>
+          </GridItem>
+
+          {/* Settings Form */}
+          <GridItem>
+            <Card
+              bg={useColorModeValue("white", "gray.800")}
+              borderColor={useColorModeValue("gray.200", "gray.700")}
+              borderWidth="1px"
+              borderRadius="2xl"
+              overflow="hidden"
+              boxShadow="xl"
+            >
+              <CardBody p={8}>
+                <VStack spacing={6} align="stretch">
+                  {/* Personal Information */}
+                  <Box>
+                    <Heading
+                      size="md"
+                      mb={4}
+                      color="gray.900"
+                      _dark={{ color: "white" }}
+                    >
+                      Personal Information
+                    </Heading>
+                    <VStack spacing={4}>
+                      <FormControl>
+                        <FormLabel fontWeight="600">Email Address</FormLabel>
+                        <Input
+                          value={user?.email || ""}
+                          disabled
+                          bg={useColorModeValue("gray.100", "gray.700")}
+                          borderRadius="lg"
+                        />
+                      </FormControl>
+
+                      <FormControl>
+                        <FormLabel fontWeight="600">Full Name</FormLabel>
+                        <Input
+                          value={fullname || ""}
+                          onChange={(e) => {
+                            setFullname(e.target.value);
+                            setNameChange(originalName !== e.target.value);
+                          }}
+                          disabled={loading}
+                          borderRadius="lg"
+                          _focus={{
+                            borderColor: "brand.500",
+                            boxShadow:
+                              "0 0 0 1px var(--chakra-colors-brand-500)",
+                          }}
+                        />
+                      </FormControl>
+
+                      <FormControl>
+                        <FormLabel fontWeight="600">Username</FormLabel>
+                        <Input
+                          value={username || ""}
+                          onChange={(e) => {
+                            setUsername(e.target.value);
+                            setUserChange(originalUserName !== e.target.value);
+                          }}
+                          disabled={loading}
+                          borderRadius="lg"
+                          _focus={{
+                            borderColor: "brand.500",
+                            boxShadow:
+                              "0 0 0 1px var(--chakra-colors-brand-500)",
+                          }}
+                        />
+                      </FormControl>
+                    </VStack>
+                  </Box>
+
+                  <Divider />
+
+                  {/* Avatar Selection */}
+                  <Box>
+                    <Heading
+                      size="md"
+                      mb={4}
+                      color="gray.900"
+                      _dark={{ color: "white" }}
+                    >
+                      Choose Your Avatar
+                    </Heading>
+                    <Wrap spacing={4} justify="center">
+                      {[
+                        "profile_0.png",
+                        "profile_0.1.png",
+                        "profile_0.2.png",
+                        "profile_0.3.png",
+                        "profile_0.4.png",
+                        "profile_0.5.png",
+                        "profile_0.6.png",
+                        "profile_1.png",
+                        "profile_2.png",
+                        "profile_3.png",
+                        "profile_4.png",
+                      ].map((src) => (
+                        <WrapItem key={src}>
+                          <Avatar
+                            src={src}
+                            size="lg"
+                            cursor="pointer"
+                            border={
+                              avatarUrl === src ? "3px solid" : "2px solid"
+                            }
+                            borderColor={
+                              avatarUrl === src ? "brand.500" : "transparent"
+                            }
+                            _hover={{
+                              transform: "scale(1.1)",
+                              borderColor: "brand.300",
+                            }}
+                            transition="all 0.2s"
+                            onClick={() => avatarClicked(src)}
+                          />
+                        </WrapItem>
+                      ))}
+                      <WrapItem>
+                        <Box position="relative">
+                          <Avatar
+                            src="upload-file.png"
+                            size="lg"
+                            cursor="pointer"
+                            border="2px dashed"
+                            borderColor="gray.300"
+                            _hover={{
+                              transform: "scale(1.1)",
+                              borderColor: "brand.300",
+                            }}
+                            transition="all 0.2s"
+                            onClick={handleButtonClick}
+                          />
+                          <Input
+                            ref={fileInputRef}
+                            type="file"
+                            onChange={handleFileChange}
+                            position="absolute"
+                            top="0"
+                            left="0"
+                            width="100%"
+                            height="100%"
+                            opacity="0"
+                            cursor="pointer"
+                            accept="image/*"
+                          />
+                        </Box>
+                      </WrapItem>
+                    </Wrap>
+                  </Box>
+                </VStack>
+              </CardBody>
+
+              <Divider />
+
+              <CardFooter p={8}>
+                <HStack spacing={4} w="full" justify="space-between">
+                  <Button
+                    bg="linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%)"
+                    color="white"
+                    fontWeight="600"
+                    borderRadius="lg"
+                    disabled={
+                      loading ||
+                      (!usernameChanged && !nameChanged && !avatarChanged)
+                    }
+                    opacity={
+                      loading ||
+                      (!usernameChanged && !nameChanged && !avatarChanged)
+                        ? 0.6
+                        : 1
+                    }
+                    _hover={{
+                      transform:
+                        loading ||
+                        (!usernameChanged && !nameChanged && !avatarChanged)
+                          ? "none"
+                          : "translateY(-2px)",
+                      boxShadow:
+                        loading ||
+                        (!usernameChanged && !nameChanged && !avatarChanged)
+                          ? "none"
+                          : "0 15px 30px rgba(59, 130, 246, 0.3)",
+                    }}
+                    _active={{
+                      transform: "translateY(0)",
+                    }}
+                    transition="all 0.2s ease"
+                    onClick={() => updateProfile({ website })}
+                  >
+                    {loading
+                      ? "Saving..."
+                      : !usernameChanged && !nameChanged && !avatarChanged
+                        ? "No Changes"
+                        : "Save Changes"}
+                  </Button>
+
+                  <form action="/auth/signout" method="post">
+                    <Button
+                      type="submit"
+                      variant="ghost"
+                      color="red.500"
+                      fontWeight="600"
+                      _hover={{ bg: "red.50", color: "red.600" }}
+                      _dark={{ _hover: { bg: "red.900", color: "red.300" } }}
+                    >
+                      Sign Out
+                    </Button>
+                  </form>
+                </HStack>
+              </CardFooter>
+            </Card>
+          </GridItem>
+        </Grid>
+      </Container>
     </Box>
   );
 }

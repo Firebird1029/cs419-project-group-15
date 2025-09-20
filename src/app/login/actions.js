@@ -10,21 +10,33 @@ import createClient from "@/utils/supabase/server";
 export default async function login({ email, password }) {
   const supabase = createClient();
 
-  // type-casting here for convenience
-  // in practice, you should validate your inputs
+  // Validate inputs
+  if (!email || !password) {
+    return {
+      error: {
+        message: "Email and password are required",
+      },
+    };
+  }
+
   const data = {
     email,
     password,
   };
 
-  const { error } = await supabase.auth.signInWithPassword(data);
+  const { data: authData, error } =
+    await supabase.auth.signInWithPassword(data);
 
   if (error) {
-    // TODO handle error.message if necessary
-    redirect("/error");
+    // Return error to frontend instead of redirecting
+    return {
+      error: {
+        message: error.message,
+      },
+    };
   }
 
+  // Only redirect on successful login
   revalidatePath("/", "layout");
-  // redirect("/account");
   redirect("/");
 }
