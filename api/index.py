@@ -117,7 +117,7 @@ class Scoreboard(Resource):
         except APIError as e:
             return {"success": False, "message": e.message, "count": 0}, 500
 
-    def post(self, url_tag):
+    def post(self, url_tag):  # pylint: disable=unused-argument
         """Add or update a user to the scoreboard for an existing game."""
         req = request.get_json()
         check_auth(req, req["user_id"])
@@ -141,21 +141,21 @@ class Scoreboard(Resource):
             if len(res.data) > 0:
                 # TODO if user has previous submission, update it
                 return {"success": True, "data": res.data, "count": len(res.data)}
-            else:
-                # if user has no previous submission, insert new row
-                res = (
-                    supabase.table("scoreboard_games_profiles")
-                    .insert(
-                        {
-                            "game_id": game_id,
-                            "user_id": user_id,
-                            "details": details,
-                        }
-                    )
-                    .execute()
-                )
 
-                return {"success": True, "data": res.data, "count": len(res.data)}
+            # if user has no previous submission, insert new row
+            res = (
+                supabase.table("scoreboard_games_profiles")
+                .insert(
+                    {
+                        "game_id": game_id,
+                        "user_id": user_id,
+                        "details": details,
+                    }
+                )
+                .execute()
+            )
+
+            return {"success": True, "data": res.data, "count": len(res.data)}
 
         except APIError as e:
             return {
@@ -187,7 +187,7 @@ class Rating(Resource):
         except APIError as e:
             return {"success": False, "message": e.message, "count": 0}, 500
 
-    def post(self, url_tag):
+    def post(self, url_tag):  # pylint: disable=unused-argument
         """Create a new rating/comment for an existing game."""
         req = request.get_json()
         check_auth(req, req["user_id"])
@@ -215,22 +215,22 @@ class Rating(Resource):
                     "success": False,
                     "message": "You have already left a rating/comment for this game.",
                 }
-            else:
-                # if user has no previous rating/comment, insert new row
-                res = (
-                    supabase.table("ratings")
-                    .insert(
-                        {
-                            "game_id": game_id,
-                            "user_id": user_id,
-                            "rating": rating,
-                            "comment": comment,
-                        }
-                    )
-                    .execute()
-                )
 
-                return {"success": True, "data": res.data, "count": len(res.data)}
+            # if user has no previous rating/comment, insert new row
+            res = (
+                supabase.table("ratings")
+                .insert(
+                    {
+                        "game_id": game_id,
+                        "user_id": user_id,
+                        "rating": rating,
+                        "comment": comment,
+                    }
+                )
+                .execute()
+            )
+
+            return {"success": True, "data": res.data, "count": len(res.data)}
 
         except APIError as e:
             return {
