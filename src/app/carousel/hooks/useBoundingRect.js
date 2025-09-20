@@ -28,8 +28,8 @@ export default function useBoundingRect(limit) {
   const [dimensions, setDimensions] = useState({});
   const [node, setNode] = useState(null);
 
-  const ref = useCallback((node) => {
-    setNode(node);
+  const ref = useCallback((newNode) => {
+    setNode(newNode);
   }, []);
 
   useLayoutEffect(() => {
@@ -50,6 +50,7 @@ export default function useBoundingRect(limit) {
         window.removeEventListener("scroll", listener);
       };
     }
+    return undefined;
   }, [node, limit]);
 
   return [ref, dimensions, node];

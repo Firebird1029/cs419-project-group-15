@@ -380,7 +380,7 @@ export default function CreateNewGamePage() {
                       }}
                     />
                     <FormHelperText>
-                      Help players understand what they're getting into.
+                      Help players understand what they&apos;re getting into.
                     </FormHelperText>
                   </FormControl>
 

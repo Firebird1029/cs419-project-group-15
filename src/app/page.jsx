@@ -65,7 +65,7 @@ function FallingElements() {
       {/* Gently floating elements */}
       {floatingPositions.map((pos, i) => (
         <Box
-          key={`floating-${i}`}
+          key={`floating-${pos.top}-${pos.left}`}
           position="absolute"
           top={pos.top}
           left={pos.left}
@@ -105,9 +105,9 @@ function FallingElements() {
       ))}
 
       {/* Subtle background sparkles */}
-      {sparklePositions.map((pos, i) => (
+      {sparklePositions.map((pos) => (
         <Box
-          key={`sparkle-${i}`}
+          key={`sparkle-${pos.top}-${pos.left}`}
           position="absolute"
           w="3px"
           h="3px"
@@ -532,9 +532,9 @@ export default function Home() {
                   </VStack>
 
                   {/* Background particles */}
-                  {[...Array(8)].map((_, i) => (
+                  {Array.from({ length: 8 }, (_, i) => (
                     <Box
-                      key={i}
+                      key={`decoration-particle-${i}`}
                       position="absolute"
                       w="4px"
                       h="4px"
@@ -617,9 +617,9 @@ export default function Home() {
                 spacing={6}
                 w="full"
               >
-                {[...Array(6)].map((_, i) => (
+                {Array.from({ length: 6 }, (_, i) => (
                   <Box
-                    key={i}
+                    key={`skeleton-${i}`}
                     h="200px"
                     bg="gray.100"
                     _dark={{ bg: "gray.700" }}

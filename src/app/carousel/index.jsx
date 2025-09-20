@@ -1,21 +1,13 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { capsFirst } from "./utils";
+import React from "react";
 import "fontsource-inter/500.css";
-import ReactDOM from "react-dom";
 import NextLink from "next/link";
 
 // https://codesandbox.io/p/sandbox/chakra-carousel-dd8vn?file=%2Fsrc%2Findex.js
 import {
-  ChakraProvider,
-  extendTheme,
-  Container,
-  Heading,
   Button,
   VStack,
   HStack,
   Text,
-  Flex,
-  Tag,
   Link,
   Avatar,
   Card,
@@ -24,18 +16,15 @@ import {
   Box,
   useColorModeValue,
   SimpleGrid,
+  Heading,
 } from "@chakra-ui/react";
 
 import { ArrowForwardIcon } from "@chakra-ui/icons";
-import createClient from "@/utils/supabase/client";
-import theme from "./theme";
-
-import ChakraCarousel from "./ChakraCarousel";
+import { capsFirst } from "./utils";
 
 // Modern Game Card Component
 function GameCard({ game }) {
   const {
-    id,
     description,
     name,
     type,

@@ -168,15 +168,12 @@ function Scoreboard({ scores }) {
                     </Td>
                     <Td>
                       <Badge
-                        colorScheme={
-                          index === 0
-                            ? "yellow"
-                            : index === 1
-                              ? "gray"
-                              : index === 2
-                                ? "orange"
-                                : "blue"
-                        }
+                        colorScheme={(() => {
+                          if (index === 0) return "yellow";
+                          if (index === 1) return "gray";
+                          if (index === 2) return "orange";
+                          return "blue";
+                        })()}
                         variant="subtle"
                         px={3}
                         py={1}
@@ -203,7 +200,9 @@ function Ratings({ ratings }) {
   const cardBg = useColorModeValue("white", "gray.800");
   const borderColor = useColorModeValue("gray.200", "gray.700");
 
-  const sortedRatings = ratings.sort((a, b) => new Date(b.created_at) - new Date(a.created_at)); // Sort by newest reviews first
+  const sortedRatings = ratings.sort(
+    (a, b) => new Date(b.created_at) - new Date(a.created_at),
+  ); // Sort by newest reviews first
 
   const averageRating =
     ratings.length > 0
@@ -317,13 +316,11 @@ function Ratings({ ratings }) {
                     </VStack>
                   </HStack>
                   <Badge
-                    colorScheme={
-                      rating.rating >= 4
-                        ? "green"
-                        : rating.rating >= 3
-                          ? "yellow"
-                          : "red"
-                    }
+                    colorScheme={(() => {
+                      if (rating.rating >= 4) return "green";
+                      if (rating.rating >= 3) return "yellow";
+                      return "red";
+                    })()}
                     variant="subtle"
                     px={2}
                     py={1}
@@ -340,7 +337,7 @@ function Ratings({ ratings }) {
                     _dark={{ color: "gray.400" }}
                     lineHeight="1.5"
                   >
-                    "{rating.comment}"
+                    &quot;{rating.comment}&quot;
                   </Text>
                 )}
               </Box>
@@ -695,7 +692,8 @@ export default function GameDetailsPage({ params: { slug } }) {
                 Game Not Found
               </Heading>
               <Text color="gray.600" _dark={{ color: "gray.400" }}>
-                The game you're looking for doesn't exist or has been removed.
+                The game you&apos;re looking for doesn&apos;t exist or has been
+                removed.
               </Text>
               <Button
                 as={Link}

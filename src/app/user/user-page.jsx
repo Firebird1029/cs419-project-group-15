@@ -5,34 +5,14 @@
 
 "use client";
 
-import React, { useCallback, useEffect, useState, useRef } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
-  Input,
   Box,
   Avatar,
-  Flex,
-  Center,
   Text,
-  Square,
   Card,
-  CardHeader,
   CardBody,
-  CardFooter,
-  Stack,
   Heading,
-  Divider,
-  ButtonGroup,
-  Button,
-  Image,
-  Wrap,
-  WrapItem,
-  IconButton,
-  Alert,
-  AlertIcon,
-  Spinner,
-  AlertTitle,
-  AlertDescription,
-  CloseButton,
   Container,
   VStack,
   HStack,
@@ -41,6 +21,7 @@ import {
   Grid,
   GridItem,
   SimpleGrid,
+  Divider,
 } from "@chakra-ui/react";
 import createClient from "@/utils/supabase/client";
 import Carousel from "../carousel/index";
@@ -66,14 +47,18 @@ export default function AccountForm() {
   async function setUserInformation(userid) {
     // SET BASIC USER INFORMATION
     try {
-      const { data, error, status } = await supabase
+      const {
+        data,
+        error: profileError,
+        status: profileStatus,
+      } = await supabase
         .from("profiles")
         .select(`full_name, username, website, avatar`)
         .eq("id", userid)
         .single();
 
-      if (error && status !== 406) {
-        throw error;
+      if (profileError && profileStatus !== 406) {
+        throw profileError;
       }
 
       if (data) {
@@ -82,47 +67,55 @@ export default function AccountForm() {
         setWebsite(data.website);
         setAvatarUrl(data.avatar);
       }
-    } catch (error) {
+    } catch (profileError) {
       // alert("Error loading user data!");
-      console.log(error);
+      // console.log(profileError);
     }
 
     // SET CREATED GAMES
     try {
-      const { data, error, status } = await supabase
+      const {
+        data: gamesData,
+        error: gamesError,
+        status: gamesStatus,
+      } = await supabase
         .from("games")
         .select("*, profiles!inner(username, avatar)")
         .eq("owner", userid);
 
-      if (error && status !== 406) {
-        throw error;
+      if (gamesError && gamesStatus !== 406) {
+        throw gamesError;
       }
 
-      if (data) {
-        setCreatedGames(data);
+      if (gamesData) {
+        setCreatedGames(gamesData);
       }
-    } catch (error) {
+    } catch (gamesError) {
       // alert("Error loading user data!");
-      console.log(error);
+      // console.log(gamesError);
     }
 
     // SET REVIEWS
     try {
-      const { data, error, status } = await supabase
+      const {
+        data: ratingsData,
+        error: ratingsError,
+        status: ratingsStatus,
+      } = await supabase
         .from("ratings")
         .select(`game_id, rating, comment, created_at`)
         .eq("user_id", userid);
 
-      if (error && status !== 406) {
-        throw error;
+      if (ratingsError && ratingsStatus !== 406) {
+        throw ratingsError;
       }
 
-      if (data) {
-        setReviews(data);
+      if (ratingsData) {
+        setReviews(ratingsData);
       }
-    } catch (error) {
+    } catch (ratingsError) {
       // alert("Error loading user data!");
-      console.log(error);
+      // console.log(ratingsError);
     }
   }
 
@@ -140,10 +133,10 @@ export default function AccountForm() {
             setUserID(data.id);
             setUserInformation(data.id);
           }
-        } catch (error) {
-          console.log("GOT HERE 4");
+        } catch (profileError) {
+          // console.log("GOT HERE 4");
           // alert("Error loading user data!");
-          console.log(error);
+          // console.log(profileError);
         }
       }
     },
@@ -347,8 +340,8 @@ export default function AccountForm() {
                             _dark={{ color: "gray.500" }}
                             textAlign="center"
                           >
-                            This user hasn't created any games yet. Check back
-                            later!
+                            This user hasn&apos;t created any games yet. Check
+                            back later!
                           </Text>
                         </VStack>
                       </VStack>
@@ -398,9 +391,9 @@ export default function AccountForm() {
 
                     {reviews && reviews.length > 0 ? (
                       <VStack spacing={4} align="stretch">
-                        {reviews.slice(0, 3).map((review, index) => (
+                        {reviews.slice(0, 3).map((review) => (
                           <Box
-                            key={index}
+                            key={`review-${review.game_id}-${review.created_at}`}
                             p={4}
                             bg={useColorModeValue("gray.50", "gray.700")}
                             borderRadius="lg"
@@ -432,7 +425,7 @@ export default function AccountForm() {
                                 color="gray.600"
                                 _dark={{ color: "gray.400" }}
                               >
-                                "{review.comment}"
+                                &quot;{review.comment}&quot;
                               </Text>
                               <HStack>
                                 <Text fontSize="xs" color="gray.500">
@@ -470,7 +463,7 @@ export default function AccountForm() {
                             _dark={{ color: "gray.500" }}
                             textAlign="center"
                           >
-                            This user hasn't reviewed any games yet.
+                            This user hasn&apos;t reviewed any games yet.
                           </Text>
                         </VStack>
                       </VStack>

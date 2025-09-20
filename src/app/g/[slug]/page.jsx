@@ -50,7 +50,7 @@ function Riddle({ question, answer, saveToScoreboard, gameName }) {
   const cardBg = useColorModeValue("white", "gray.800");
   const borderColor = useColorModeValue("gray.200", "gray.700");
 
-  function checkAnswer() {
+  const checkAnswer = useCallback(() => {
     if (guess.toLowerCase().trim() === answer.toLowerCase().trim()) {
       setResult("correct");
       setStop(true);
@@ -59,7 +59,20 @@ function Riddle({ question, answer, saveToScoreboard, gameName }) {
       setResult("incorrect");
       setTimeout(() => setResult(""), 2000);
     }
-  }
+  }, [guess, answer, timer, saveToScoreboard]);
+
+  const handleKeyDown = useCallback(
+    (e) => {
+      if (e.key === "Enter") {
+        checkAnswer();
+      }
+    },
+    [checkAnswer],
+  );
+
+  const handleGuessChange = useCallback((e) => {
+    setGuess(e.target.value);
+  }, []);
 
   useEffect(() => {
     if (!stopTimer && timer > 0) {
@@ -106,7 +119,7 @@ function Riddle({ question, answer, saveToScoreboard, gameName }) {
                 Congratulations! 🎉
               </Heading>
               <Text fontSize="lg" color="gray.600">
-                You solved "{gameName}" in {formatTime(60 - timer)}!
+                You solved &quot;{gameName}&quot; in {formatTime(60 - timer)}!
               </Text>
               <HStack spacing={4}>
                 <Button
@@ -254,8 +267,8 @@ function Riddle({ question, answer, saveToScoreboard, gameName }) {
                     type="text"
                     placeholder="Enter your answer..."
                     value={guess}
-                    onChange={(e) => setGuess(e.target.value)}
-                    onKeyDown={(e) => e.key === "Enter" && checkAnswer()}
+                    onChange={handleGuessChange}
+                    onKeyDown={handleKeyDown}
                     size="lg"
                     borderRadius="xl"
                     bg={useColorModeValue("gray.50", "gray.700")}
@@ -294,7 +307,7 @@ function Riddle({ question, answer, saveToScoreboard, gameName }) {
                     <AlertIcon />
                     <AlertTitle>Incorrect!</AlertTitle>
                     <AlertDescription>
-                      Try again, you've got this!
+                      Try again, you&apos;ve got this!
                     </AlertDescription>
                   </Alert>
                 )}

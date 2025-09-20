@@ -39,4 +39,7 @@ export default async function login({ email, password }) {
   // Only redirect on successful login
   revalidatePath("/", "layout");
   redirect("/");
+
+  // This line will never be reached due to redirect, but needed for linting
+  return { success: true };
 }

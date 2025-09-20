@@ -257,12 +257,12 @@ export default function GalleryPage() {
   useEffect(() => {
     async function loadGames() {
       try {
-        const { data, error } = await supabase
+        const { data, error: fetchError } = await supabase
           .from("games")
           .select("*, profiles!inner(username, avatar)");
 
-        if (error) {
-          setError(error);
+        if (fetchError) {
+          setError(fetchError);
         } else {
           setAllGames(data || []);
           setFilteredGames(data || []);
@@ -359,9 +359,9 @@ export default function GalleryPage() {
               spacing={6}
               w="full"
             >
-              {[...Array(8)].map((_, i) => (
+              {Array.from({ length: 8 }, (_, i) => (
                 <Box
-                  key={i}
+                  key={`loading-skeleton-${i}`}
                   h="200px"
                   bg="gray.100"
                   _dark={{ bg: "gray.700" }}

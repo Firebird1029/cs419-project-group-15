@@ -10,14 +10,11 @@ import {
   Input,
   Box,
   Avatar,
-  Flex,
   Card,
   CardBody,
   CardFooter,
-  Stack,
   Heading,
   Divider,
-  ButtonGroup,
   Button,
   Wrap,
   WrapItem,
@@ -88,14 +85,18 @@ export default function AccountForm({ user }) {
       try {
         setLoading(true);
 
-        const { data, error, status } = await supabase
+        const {
+          data,
+          error: profileError,
+          status: profileStatus,
+        } = await supabase
           .from("profiles")
           .select(`full_name, username, website, avatar`)
           .eq("id", user.id)
           .single();
 
-        if (error && status !== 406) {
-          throw error;
+        if (profileError && profileStatus !== 406) {
+          throw profileError;
         }
 
         if (data) {
@@ -108,9 +109,9 @@ export default function AccountForm({ user }) {
           setOGUserName(data.username);
           setOGAvatar(data.avatar);
         }
-      } catch (error) {
+      } catch (profileError) {
         // alert("Error loading user data!");
-        console.log(error);
+        // console.log(profileError);
       } finally {
         setLoading(false);
       }
@@ -129,62 +130,52 @@ export default function AccountForm({ user }) {
     return data;
   }
 
-  const checkFileExists = async (bucketName, filePath) => {
-    console.log("LOOKING FOR THIS FILE: ", filePath);
-    const { data, error } = await supabase.storage
-      .from(bucketName)
-      .getPublicUrl(filePath);
-
-    if (error) {
-      console.error("Error checking file existence:", error.message);
-      return false;
-    }
-
-    return data !== null;
-  };
-
   async function updateProfile({ website_ }) {
     try {
       setLoading(true);
 
       // Check if username has changed and if it's already taken
       if (usernameChanged && username !== originalUserName) {
-        console.log('Checking username availability:', username);
+        // console.log("Checking username availability:", username);
         const { data: existingProfile, error: usernameError } = await supabase
-          .from('profiles')
-          .select('username')
-          .eq('username', username)
-          .neq('id', user.id) // Exclude current user
+          .from("profiles")
+          .select("username")
+          .eq("username", username)
+          .neq("id", user.id) // Exclude current user
           .single();
 
         if (existingProfile) {
-          setError(`The username "${username}" is already taken. Please choose a different username.`);
+          setError(
+            `The username "${username}" is already taken. Please choose a different username.`,
+          );
           setLoading(false);
           return;
         }
 
-        if (usernameError && usernameError.code !== 'PGRST116') {
+        if (usernameError && usernameError.code !== "PGRST116") {
           // PGRST116 is "not found" which is what we want
-          console.error('Error checking username availability:', usernameError);
+          // console.error("Error checking username availability:", usernameError);
         }
       }
 
-      const { error } = await supabase.from("profiles").upsert({
-        id: user.id,
-        full_name: fullname,
-        username,
-        website_,
-        avatar: avatarUrl,
-        updated_at: new Date().toISOString(),
-      });
+      const { error: profileUpdateError } = await supabase
+        .from("profiles")
+        .upsert({
+          id: user.id,
+          full_name: fullname,
+          username,
+          website_,
+          avatar: avatarUrl,
+          updated_at: new Date().toISOString(),
+        });
 
       if (selectedFile) {
-        const { data, error } = await supabase.storage
+        const { error: uploadError } = await supabase.storage
           .from("pfps")
           .upload(`${user.id}/uploaded-pfp`, selectedFile);
 
-        if (error) {
-          const { data, error } = await supabase.storage
+        if (uploadError) {
+          await supabase.storage
             .from("pfps")
             .update(`${user.id}/uploaded-pfp`, selectedFile, {
               upsert: true,
@@ -196,25 +187,23 @@ export default function AccountForm({ user }) {
           // https://stackoverflow.com/questions/77523252/the-image-is-not-re-loaded-from-supabase <Thank god for this
           const url = `${media.publicUrl}?q=${Date.now()}`;
           setAvatarUrl(url);
-          const { error } = await supabase.from("profiles").upsert({
+          await supabase.from("profiles").upsert({
             id: user.id,
             avatar: url,
             updated_at: new Date().toISOString(),
           });
-        } else {
-          console.log(71, error);
         }
       }
 
-      if (error) throw error;
+      if (profileUpdateError) throw profileUpdateError;
       setStatus(true);
-    } catch (error) {
-      if (error.code === 23505) {
+    } catch (updateError) {
+      if (updateError.code === 23505) {
         setError(
           `The username "${username}" is already taken. Please try a different username.`,
         );
       } else {
-        setError(`Errored with code ${error.code}... Please try again.`);
+        setError(`Errored with code ${updateError.code}... Please try again.`);
       }
     } finally {
       setLoading(false);
@@ -222,16 +211,16 @@ export default function AccountForm({ user }) {
   }
 
   function closeSuccess() {
-    location.reload();
+    window.location.reload();
   }
 
   function closeError() {
-    location.reload();
+    window.location.reload();
   }
 
   function avatarClicked(url) {
     setAvatarUrl(url);
-    if (originalAvatar == url) {
+    if (originalAvatar === url) {
       setAvatarChange(false);
     } else {
       setAvatarChange(true);
@@ -271,7 +260,7 @@ export default function AccountForm({ user }) {
                 Your profile has been updated successfully.
               </AlertDescription>
             </Box>
-            <CloseButton onClick={closeSuccess} />
+            <CloseButton onClick={() => closeSuccess()} />
           </Alert>
         )}
 
@@ -287,7 +276,7 @@ export default function AccountForm({ user }) {
               <AlertTitle>Error!</AlertTitle>
               <AlertDescription>{error}</AlertDescription>
             </Box>
-            <CloseButton onClick={closeError} />
+            <CloseButton onClick={() => closeError()} />
           </Alert>
         )}
 
@@ -584,11 +573,12 @@ export default function AccountForm({ user }) {
                     transition="all 0.2s ease"
                     onClick={() => updateProfile({ website })}
                   >
-                    {loading
-                      ? "Saving..."
-                      : !usernameChanged && !nameChanged && !avatarChanged
-                        ? "No Changes"
-                        : "Save Changes"}
+                    {(() => {
+                      if (loading) return "Saving...";
+                      if (!usernameChanged && !nameChanged && !avatarChanged)
+                        return "No Changes";
+                      return "Save Changes";
+                    })()}
                   </Button>
 
                   <form action="/auth/signout" method="post">

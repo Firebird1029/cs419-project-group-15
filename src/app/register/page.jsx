@@ -62,41 +62,45 @@ export default function Register() {
   );
 
   // Username validation
-  const validateUsername = (username) => {
-    if (username.length < 3) return "Username must be at least 3 characters";
-    if (username.length > 20) return "Username must be less than 20 characters";
-    if (!/^[a-zA-Z0-9_]+$/.test(username))
+  const validateUsername = (usernameValue) => {
+    if (usernameValue.length < 3)
+      return "Username must be at least 3 characters";
+    if (usernameValue.length > 20)
+      return "Username must be less than 20 characters";
+    if (!/^[a-zA-Z0-9_]+$/.test(usernameValue))
       return "Username can only contain letters, numbers, and underscores";
     return null;
   };
 
   // Email validation
-  const validateEmail = (email) => {
+  const validateEmail = (emailValue) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) return "Please enter a valid email address";
+    if (!emailRegex.test(emailValue))
+      return "Please enter a valid email address";
     return null;
   };
 
   // Password strength validation
-  const validatePassword = (password) => {
-    if (password.length < 8) return "Password must be at least 8 characters";
-    if (!/(?=.*[a-z])/.test(password))
+  const validatePassword = (passwordValue) => {
+    if (passwordValue.length < 8)
+      return "Password must be at least 8 characters";
+    if (!/(?=.*[a-z])/.test(passwordValue))
       return "Password must contain at least one lowercase letter";
-    if (!/(?=.*[A-Z])/.test(password))
+    if (!/(?=.*[A-Z])/.test(passwordValue))
       return "Password must contain at least one uppercase letter";
-    if (!/(?=.*\d)/.test(password))
+    if (!/(?=.*\d)/.test(passwordValue))
       return "Password must contain at least one number";
     return null;
   };
 
   // Password strength calculator
-  const calculatePasswordStrength = (password) => {
+  const calculatePasswordStrength = (passwordValue) => {
     let strength = 0;
-    if (password.length >= 8) strength += 25;
-    if (/(?=.*[a-z])/.test(password)) strength += 25;
-    if (/(?=.*[A-Z])/.test(password)) strength += 25;
-    if (/(?=.*\d)/.test(password)) strength += 25;
-    if (/(?=.*[@$!%*?&])/.test(password)) strength += 25; // Special characters bonus
+    if (passwordValue.length >= 8) strength += 25;
+    if (/(?=.*[a-z])/.test(passwordValue)) strength += 25;
+    if (/(?=.*[A-Z])/.test(passwordValue)) strength += 25;
+    if (/(?=.*\d)/.test(passwordValue)) strength += 25;
+    if (/(?=.*[@$!%*?&])/.test(passwordValue)) strength += 25; // Special characters bonus
     return Math.min(strength, 100);
   };
 
@@ -184,7 +188,7 @@ export default function Register() {
         setAlertType("error");
       }
     } catch (error) {
-      console.error("Registration error:", error);
+      // console.error("Registration error:", error);
       setAlertMessage("An unexpected error occurred. Please try again.");
       setAlertType("error");
     } finally {
@@ -211,8 +215,8 @@ export default function Register() {
       } else {
         setLoading(false);
       }
-    })().catch((err) => {
-      console.error(err);
+    })().catch(() => {
+      // console.error(err);
       setLoading(false);
     });
   }, [router, supabase.auth]);

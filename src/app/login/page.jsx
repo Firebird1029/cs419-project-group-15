@@ -57,14 +57,14 @@ export default function Login() {
   );
 
   // Email validation
-  const validateEmail = (email) => {
+  const validateEmail = (emailValue) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
+    return emailRegex.test(emailValue);
   };
 
   // Password validation
-  const validatePassword = (password) => {
-    return password.length >= 6;
+  const validatePassword = (passwordValue) => {
+    return passwordValue.length >= 6;
   };
 
   // Real-time validation
@@ -124,7 +124,7 @@ export default function Login() {
         return;
       }
 
-      console.error("Login error:", error);
+      // console.error("Login error:", error);
       setAlertMessage("An unexpected error occurred. Please try again.");
       setAlertType("error");
     } finally {
@@ -151,8 +151,8 @@ export default function Login() {
       } else {
         setLoading(false);
       }
-    })().catch((err) => {
-      console.error(err);
+    })().catch(() => {
+      // console.error(err);
       setLoading(false);
     });
   }, [router, supabase.auth]);
@@ -386,7 +386,7 @@ export default function Login() {
                     color="gray.600"
                     _dark={{ color: "gray.400" }}
                   >
-                    Don't have an account?
+                    Don&apos;t have an account?
                   </Text>
                   <Button
                     as={NextLink}

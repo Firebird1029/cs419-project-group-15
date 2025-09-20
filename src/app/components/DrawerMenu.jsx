@@ -225,7 +225,6 @@ export default function DrawerMenu({ user }) {
                         Settings
                       </Button>
                     </Link>
-
                   </VStack>
                 </>
               )}

@@ -78,46 +78,39 @@ function ChakraCarousel({ children, gap }) {
     }
   }, [isBetweenBaseAndMd, isBetweenMdAndXl, isGreaterThanXL, sliderWidth, gap]);
 
-  const sliderProps = {
-    setTrackIsActive,
-    initSliderWidth,
-    setActiveItem,
-    activeItem,
-    constraint,
-    itemWidth,
-    positions,
-    gap,
-  };
-
-  const trackProps = {
-    setTrackIsActive,
-    trackIsActive,
-    setActiveItem,
-    sliderWidth,
-    activeItem,
-    constraint,
-    multiplier,
-    itemWidth,
-    positions,
-    gap,
-  };
-
-  const itemProps = {
-    setTrackIsActive,
-    trackIsActive,
-    setActiveItem,
-    activeItem,
-    constraint,
-    itemWidth,
-    positions,
-    gap,
-  };
-
   return (
-    <Slider {...sliderProps}>
-      <Track {...trackProps}>
+    <Slider
+      setTrackIsActive={setTrackIsActive}
+      initSliderWidth={initSliderWidth}
+      setActiveItem={setActiveItem}
+      activeItem={activeItem}
+      constraint={constraint}
+      itemWidth={itemWidth}
+      positions={positions}
+      gap={gap}
+    >
+      <Track
+        setTrackIsActive={setTrackIsActive}
+        initSliderWidth={initSliderWidth}
+        setActiveItem={setActiveItem}
+        activeItem={activeItem}
+        constraint={constraint}
+        itemWidth={itemWidth}
+        positions={positions}
+        gap={gap}
+      >
         {children.map((child, index) => (
-          <Item {...itemProps} index={index} key={index}>
+          <Item
+            setTrackIsActive={setTrackIsActive}
+            setActiveItem={setActiveItem}
+            activeItem={activeItem}
+            constraint={constraint}
+            itemWidth={itemWidth}
+            positions={positions}
+            gap={gap}
+            index={index}
+            key={child.key || `carousel-item-${child.props?.game?.id || index}`}
+          >
             {child}
           </Item>
         ))}
@@ -148,14 +141,16 @@ function Slider({
 
   const handleDecrementClick = () => {
     setTrackIsActive(true);
-    !(activeItem === positions.length - positions.length) &&
+    if (!(activeItem === positions.length - positions.length)) {
       setActiveItem((prev) => prev - 1);
+    }
   };
 
   const handleIncrementClick = () => {
     setTrackIsActive(true);
-    !(activeItem === positions.length - constraint) &&
+    if (!(activeItem === positions.length - constraint)) {
       setActiveItem((prev) => prev + 1);
+    }
   };
 
   return (
@@ -340,28 +335,24 @@ function Track({
     };
   }, [handleClick, handleResize, handleKeyDown, positions]);
 
-  return (
-    <>
-      {itemWidth && (
-        <VStack ref={node} spacing={5} alignItems="stretch">
-          <MotionFlex
-            dragConstraints={node}
-            onDragStart={handleDragStart}
-            onDragEnd={handleDragEnd}
-            animate={controls}
-            style={{ x }}
-            drag="x"
-            _active={{ cursor: "grabbing" }}
-            minWidth="min-content"
-            flexWrap="nowrap"
-            cursor="grab"
-          >
-            {children}
-          </MotionFlex>
-        </VStack>
-      )}
-    </>
-  );
+  return itemWidth ? (
+    <VStack ref={node} spacing={5} alignItems="stretch">
+      <MotionFlex
+        dragConstraints={node}
+        onDragStart={handleDragStart}
+        onDragEnd={handleDragEnd}
+        animate={controls}
+        style={{ x }}
+        drag="x"
+        _active={{ cursor: "grabbing" }}
+        minWidth="min-content"
+        flexWrap="nowrap"
+        cursor="grab"
+      >
+        {children}
+      </MotionFlex>
+    </VStack>
+  ) : null;
 }
 
 function Item({
@@ -375,21 +366,22 @@ function Item({
   index,
   gap,
 }) {
-  const [userDidTab, setUserDidTab] = useState(false);
-
   const handleFocus = () => setTrackIsActive(true);
 
   const handleBlur = () => {
     // userDidTab && index + 1 === positions.length && setTrackIsActive(false);
-    setUserDidTab(false);
   };
 
-  const handleKeyUp = (event) =>
-    event.key === "Tab" &&
-    !(activeItem === positions.length - constraint) &&
-    setActiveItem(index);
+  const handleKeyUp = (event) => {
+    if (
+      event.key === "Tab" &&
+      !(activeItem === positions.length - constraint)
+    ) {
+      setActiveItem(index);
+    }
+  };
 
-  const handleKeyDown = (event) => event.key === "Tab" && setUserDidTab(true);
+  const handleKeyDown = () => {};
 
   return (
     <Flex
