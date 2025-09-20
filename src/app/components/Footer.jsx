@@ -140,7 +140,7 @@ export default function Footer() {
               fontSize="sm"
               color={useColorModeValue("gray.500", "gray.400")}
             >
-              © 2023 Mind Matrix.
+              © 2024 Mind Matrix.
             </Text>
           </Box>
         </VStack>
