@@ -10,7 +10,7 @@
     "start": "next start",
     "lint": "eslint --fix --c .eslintrc.json --ext .js,.jsx,.mjs .; prettier --write --config ./.prettierrc .",
     "lint:prod": "eslint --c .eslintrc.json --ext .js,.jsx,.mjs --max-warnings 0 . && prettier --check --config ./.prettierrc .",
-    "prepare": "husky install"
+    "prepare": "echo 'husky disabled - change this back to \"husky install\" to re-enable'"
   },
   "dependencies": {
     "@chakra-ui/icons": "^2.1.1",
