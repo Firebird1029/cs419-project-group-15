@@ -136,88 +136,102 @@ function GameCard({ game }) {
   const borderColor = useColorModeValue("gray.200", "gray.700");
 
   return (
-    <Card
-      bg={cardBg}
-      borderColor={borderColor}
-      borderWidth="1px"
-      borderRadius="2xl"
-      overflow="hidden"
-      _hover={{
-        transform: "translateY(-8px)",
-        boxShadow: "xl",
-        borderColor: "brand.300",
-      }}
-      transition="all 0.3s ease"
-      cursor="pointer"
-    >
-      <CardBody p={6}>
-        <VStack spacing={4} align="stretch">
-          <HStack justify="space-between" align="start">
-            <VStack align="start" spacing={2} flex={1}>
-              <Heading
-                size="md"
-                fontWeight="700"
-                color="gray.900"
-                _dark={{ color: "white" }}
-              >
-                {game.name}
-              </Heading>
-              <Badge
-                bg="linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%)"
-                color="white"
-                size="sm"
-                px={3}
-                py={1}
-                borderRadius="8px"
-                fontWeight="600"
-              >
-                {game.type}
-              </Badge>
-            </VStack>
-            <Icon as={PlayIcon} w={5} h={5} color="brand.500" />
-          </HStack>
+    <Link href={`/g/${game.url_tag}`} style={{ textDecoration: "none" }}>
+      <Card
+        bg={cardBg}
+        borderColor={borderColor}
+        borderWidth="1px"
+        borderRadius="2xl"
+        overflow="hidden"
+        _hover={{
+          transform: "translateY(-8px)",
+          boxShadow: "xl",
+          borderColor: "brand.300",
+        }}
+        transition="all 0.3s ease"
+        cursor="pointer"
+      >
+        <CardBody p={6}>
+          <VStack spacing={4} align="stretch">
+            <HStack justify="space-between" align="start">
+              <VStack align="start" spacing={2} flex={1}>
+                <Heading
+                  size="md"
+                  fontWeight="700"
+                  color="gray.900"
+                  _dark={{ color: "white" }}
+                >
+                  {game.name}
+                </Heading>
+                <Badge
+                  bg="linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%)"
+                  color="white"
+                  size="sm"
+                  px={3}
+                  py={1}
+                  borderRadius="8px"
+                  fontWeight="600"
+                >
+                  {game.type}
+                </Badge>
+              </VStack>
+              <Icon as={PlayIcon} w={5} h={5} color="brand.500" />
+            </HStack>
 
-          <HStack spacing={3}>
-            <Avatar
+            <Link
+              href={`/user/?username=${game.profiles?.username}`}
+              _hover={{ textDecoration: "none" }}
+              onClick={(e) => e.stopPropagation()}
+              tabIndex={-1}
+            >
+              <HStack
+                spacing={3}
+                p={2}
+                borderRadius="lg"
+                _hover={{ bg: "gray.50" }}
+                _dark={{ _hover: { bg: "gray.700" } }}
+              >
+                <Avatar
+                  size="sm"
+                  src={game.profiles?.avatar}
+                  name={game.profiles?.username}
+                />
+                <VStack align="start" spacing={0} flex={1}>
+                  <Text
+                    fontSize="sm"
+                    fontWeight="500"
+                    color="gray.700"
+                    _dark={{ color: "gray.300" }}
+                  >
+                    {game.profiles?.username}
+                  </Text>
+                </VStack>
+              </HStack>
+            </Link>
+
+            <Button
+              bg="linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%)"
+              color="white"
               size="sm"
-              src={game.profiles?.avatar}
-              name={game.profiles?.username}
-            />
-            <VStack align="start" spacing={0}>
-              <Text
-                fontSize="sm"
-                fontWeight="500"
-                color="gray.700"
-                _dark={{ color: "gray.300" }}
-              >
-                {game.profiles?.username}
-              </Text>
-            </VStack>
-          </HStack>
-
-          <Button
-            as={Link}
-            href={`/g/${game.url_tag}`}
-            bg="linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%)"
-            color="white"
-            size="sm"
-            rightIcon={<ArrowForwardIcon />}
-            fontWeight="600"
-            borderRadius="12px"
-            _hover={{
-              transform: "translateY(-2px)",
-              boxShadow: "0 15px 30px rgba(59, 130, 246, 0.3)",
-            }}
-            _active={{
-              transform: "translateY(0)",
-            }}
-            transition="all 0.2s ease"
-          >
-            Play Now
-          </Button>
-        </VStack>
-      </CardBody>
-    </Card>
+              rightIcon={<ArrowForwardIcon />}
+              fontWeight="600"
+              borderRadius="12px"
+              _hover={{
+                transform: "translateY(-2px)",
+                boxShadow: "0 15px 30px rgba(59, 130, 246, 0.3)",
+              }}
+              _active={{
+                transform: "translateY(0)",
+              }}
+              transition="all 0.2s ease"
+              onClick={(e) => e.stopPropagation()}
+            >
+              Play Now
+            </Button>
+          </VStack>
+        </CardBody>
+      </Card>
+    </Link>
   );
 }
 
