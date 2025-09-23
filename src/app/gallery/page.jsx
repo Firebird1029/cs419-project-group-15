@@ -458,8 +458,8 @@ export default function GalleryPage() {
               maxW="2xl"
               lineHeight="1.6"
             >
-              Explore thousands of user-created games. From brain-bending
-              puzzles to strategic challenges, find your next favorite game.
+              Explore user-created games. From brain-bending
+              riddles to strategic puzzles, find your next favorite game!
             </Text>
           </VStack>
 
